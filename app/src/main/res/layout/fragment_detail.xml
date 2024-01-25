@@ -13,7 +13,7 @@
     tools:context=".ui.home.detail.DetailFragment">
 
     <EditText
-        android:id="@+id/login_username"
+        android:id="@+id/home_detail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -42,7 +42,7 @@
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_username" />
+        app:layout_constraintTop_toBottomOf="@+id/home_detail" />
 
     <Button
         android:id="@+id/register_login"

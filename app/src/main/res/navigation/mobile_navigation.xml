@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/home">
 
     <fragment
-        android:id="@+id/nav_home"
+        android:id="@+id/home"
         android:name="com.example.parking.ui.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_incident"
+        android:id="@+id/incident"
         android:name="com.example.parking.ui.incident.IncidentFragment"
         android:label="@string/menu_incident"
         tools:layout="@layout/fragment_incident" />
@@ -31,9 +31,4 @@
 
     <include app:graph="@navigation/incident" />
     <include app:graph="@navigation/home" />
-    <fragment
-        android:id="@+id/detailFragment"
-        android:name="com.example.parking.ui.home.detail.DetailFragment"
-        android:label="fragment_detail"
-        tools:layout="@layout/fragment_detail" />
 </navigation>
