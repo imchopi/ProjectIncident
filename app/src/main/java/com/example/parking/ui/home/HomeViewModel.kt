@@ -1,13 +1,37 @@
 package com.example.parking.ui.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.parking.data.repository.Repository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import java.io.IOException
+import javax.inject.Inject
 
-class HomeViewModel : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(private val repository: Repository): ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+    private val _uiState = MutableStateFlow(HomeUiState(listOf()))
+    val uiState: StateFlow<HomeUiState>
+        get() = _uiState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            try {
+                repository.refreshList()
+            }
+            catch (e: IOException) {
+                _uiState.value = _uiState.value.copy(errorMessage = e.message)
+            }
+        }
+
+        viewModelScope.launch {
+            repository.incident.collect() {
+                _uiState.value = HomeUiState(it)
+            }
+        }
     }
-    val text: LiveData<String> = _text
 }
