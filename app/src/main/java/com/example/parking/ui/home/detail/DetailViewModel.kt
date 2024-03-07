@@ -23,9 +23,9 @@ class DetailViewModel @Inject constructor(private val repository: Repository) : 
         viewModelScope.launch {
             repository.getIncident(id).collect(){
                 incident -> _incidentDetail.value = DetailUiState(
-                    incident.id,
+                 0,
                     incident.title,
-                    incident.description
+                    incident.description,
                 )
             }
         }

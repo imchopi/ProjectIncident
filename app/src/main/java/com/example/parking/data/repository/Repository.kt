@@ -1,11 +1,15 @@
 package com.example.parking.data.repository
 
+import android.util.Log
 import com.example.parking.data.api.ParkingRepository
 import com.example.parking.data.api.asEntityModel
 import com.example.parking.data.db.incidents.Incident
 import com.example.parking.data.db.incidents.IncidentsDBRepository
+import com.example.parking.data.db.incidents.IncidentsEntity
 import com.example.parking.data.db.incidents.asIncident
+import com.example.parking.data.db.users.User
 import com.example.parking.data.db.users.UsersDBRepository
+import com.example.parking.data.db.users.UsersEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -24,6 +28,7 @@ class Repository @Inject constructor(
             val list = incidentsDBRepository.incidents.map {
                 it.asIncident()
             }
+            Log.d("TemillaTemaTema", "El tema: $list")
             return list
         }
 
@@ -31,11 +36,20 @@ class Repository @Inject constructor(
         withContext(Dispatchers.IO) {
             try {
                 val apiParking = apiRepository.getIncidents()
-                incidentsDBRepository.insert(apiParking.asEntityModel())
+                Log.d("TemillaTema", "El tema: $apiParking")
+                incidentsDBRepository.insertAll(apiParking.asEntityModel())
             } catch (e: Exception) {
                 // Manejar cualquier excepción
             }
         }
+    }
+
+    suspend fun addIncident(incident: IncidentsEntity){
+        incidentsDBRepository.insert(incident)
+    }
+
+    suspend fun addUser(user: UsersEntity){
+        usersDBRepository.insert(user)
     }
 
     suspend fun getIncident(id: Int) = incidentsDBRepository.getIncidentById(id)

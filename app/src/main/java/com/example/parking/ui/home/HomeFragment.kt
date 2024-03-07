@@ -1,6 +1,7 @@
 package com.example.parking.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.parking.data.db.incidents.Incident
 import com.example.parking.databinding.FragmentHomeBinding
-import com.example.parking.ui.incident.IncidentFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -41,6 +41,7 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect {
+                    Log.d("Temilla", "El tema: " + adapter.submitList(it.incident))
                     adapter.submitList(it.incident)
                 }
             }
@@ -48,8 +49,10 @@ class HomeFragment : Fragment() {
     }
 
     fun toDetail (incident: Incident) {
-        val action = HomeFragmentDirections.actionHomeToDetailFragment(incident.id)
-        findNavController().navigate(action)
+        val action = incident.id?.let { HomeFragmentDirections.actionHomeToDetailFragment(it) }
+        if (action != null) {
+            findNavController().navigate(action)
+        }
     }
 
 }

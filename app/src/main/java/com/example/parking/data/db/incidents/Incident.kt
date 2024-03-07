@@ -1,11 +1,11 @@
 package com.example.parking.data.db.incidents
 
-import com.example.parking.data.db.users.User
-
 data class Incident(
-    val id: Int,
+    val id: Int? = 2,
     val title: String,
     val description: String,
     val status: String,
-    val user: Int
+    val user: Int,
+    val image: String?,
+    val imageType: String?
 )

@@ -2,16 +2,17 @@ package com.example.parking.data.db.incidents
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.parking.data.db.users.User
 
 @Entity(tableName = "incidents")
 data class IncidentsEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int? = 2,
     val title: String,
     val description: String,
     val status: String,
     val user: Int,
+    val image: String? = "",
+    val imageType: String? = ""
 )
 
 fun List<IncidentsEntity>.asIncident():List<Incident> {
@@ -21,7 +22,9 @@ fun List<IncidentsEntity>.asIncident():List<Incident> {
             it.title,
             it.description,
             it.status,
-            it.user
+            it.user,
+            it.image,
+            it.imageType
         )
     }
 }

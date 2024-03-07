@@ -14,9 +14,5 @@ class UsersDBRepository @Inject constructor(private val usersDao: UsersDao) {
         usersDao.insert(listUsersEntity)
     }
 
-    @WorkerThread
-    suspend fun getUserById(id: Int): Flow<UsersEntity> {
-        return usersDao.getUserById(id)
-    }
 
 }

@@ -1,5 +1,6 @@
 package com.example.parking.ui.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parking.data.repository.Repository
@@ -22,6 +23,7 @@ class HomeViewModel @Inject constructor(private val repository: Repository): Vie
         viewModelScope.launch {
             try {
                 repository.refreshList()
+                Log.d("Temilla", "El tema: " + repository.refreshList().toString())
             }
             catch (e: IOException) {
                 _uiState.value = _uiState.value.copy(errorMessage = e.message)
@@ -30,7 +32,10 @@ class HomeViewModel @Inject constructor(private val repository: Repository): Vie
 
         viewModelScope.launch {
             repository.incident.collect() {
+
+
                 _uiState.value = HomeUiState(it)
+                Log.d("Temilla", "El tema: " + _uiState.value.incident)
             }
         }
     }

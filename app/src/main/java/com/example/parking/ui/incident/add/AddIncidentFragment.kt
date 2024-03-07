@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.net.http.HttpException
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -18,19 +20,33 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresExtension
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.parking.MainActivity
 import com.example.parking.R
+import com.example.parking.data.api.ParkingService
+import com.example.parking.data.db.incidents.IncidentsEntity
+import com.example.parking.data.db.users.UsersEntity
 import com.example.parking.databinding.FragmentAddIncidentBinding
 import com.example.parking.databinding.FragmentHomeBinding
 import com.example.parking.ui.home.HomeFragmentDirections
+import com.example.parking.ui.login.LoginFragmentViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import okhttp3.Credentials
+import java.io.InputStream
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AddIncidentFragment : Fragment() {
 
+    private var selectedImageUri: Uri? = null
+    private val viewModelLogin: LoginFragmentViewModel by viewModels()
     private lateinit var binding: FragmentAddIncidentBinding
     private lateinit var optionsContainer: LinearLayout
     private lateinit var cameraButton: Button
@@ -77,14 +93,40 @@ class AddIncidentFragment : Fragment() {
             optionsContainer.visibility = View.VISIBLE
         }
     }
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.button.setOnClickListener {
+            val credentials = Credentials.basic("nuevo@gmail.com", "Admin123")
+            val title = binding.titleEditText.text.toString()
+            val description = binding.textEditText.text.toString()
+            val image = binding.imageView.setImageURI(selectedImageUri).toString()
+            Log.d("Foto", "Foto $image")
+            val incident = IncidentsEntity(2, title, description, "", 1, image)
+            registerIncident(incident)
+            findNavController().navigate(AddIncidentFragmentDirections.actionAddIncidentFragmentToHome())
+        }
         binding.galleryButton.setOnClickListener {
             requestPermission()
         }
         binding.cameraButton.setOnClickListener {
             findNavController().navigate(AddIncidentFragmentDirections.actionAddIncidentFragmentToCameraFragment())
+        }
+    }
+
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+    private fun registerIncident(incident: IncidentsEntity) {
+        lifecycleScope.launch {
+            try {
+                val credentials = Credentials.basic("nuevo@gmail.com", "Admin123")
+                viewModelLogin.addIncident(incident)
+                val intent = Intent(requireActivity(), MainActivity::class.java)
+                requireActivity().startActivity(intent)
+                requireActivity().finish()
+            } catch (e: HttpException) {
+                Log.e("Error", "Error al registrarse: ${e.message}")
+            }
         }
     }
 
@@ -118,9 +160,9 @@ class AddIncidentFragment : Fragment() {
     ){ result ->
         if (result.resultCode == Activity.RESULT_OK){
             val data = result.data?.data
+            selectedImageUri = data
             binding.imageView.setImageURI(data)
         }
-
     }
 
     @RequiresApi(Build.VERSION_CODES.P)

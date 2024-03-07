@@ -1,7 +1,9 @@
 package com.example.parking.di
 
 import android.content.Context
+import com.example.parking.data.api.AuthInterceptor
 import com.example.parking.data.api.ParkingService
+import com.example.parking.data.api.UserLogin
 import com.example.parking.data.db.ParkingDatabase
 import com.example.parking.data.db.incidents.IncidentsDao
 import com.example.parking.data.db.users.UsersDao
@@ -13,6 +15,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.Credentials
 import javax.inject.Named
 import javax.inject.Singleton
+
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -37,11 +40,8 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    @Named("authHeader")
-    fun provideAuthHeader(): String {
-        val username = "nuevo@gmail.com"  // Reemplaza con tu nombre de usuario
-        val password = "Admin123"  // Reemplaza con tu contraseña
-        return Credentials.basic(username, password)
+    fun provideParkingService(interceptor: AuthInterceptor): ParkingService {
+        return ParkingService(interceptor)
     }
 
 }

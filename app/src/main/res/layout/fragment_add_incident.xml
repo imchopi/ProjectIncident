@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
+    android:id="@+id/addIncidentFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/fragment_vertical_margin"
@@ -55,6 +55,19 @@
         app:layout_constraintTop_toBottomOf="@+id/titleEditText" />
 
     <!-- Botón para desplegar opciones -->
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Enviar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textEditText"
+        app:layout_constraintVertical_bias="0.238" />
+
     <ImageButton
         android:id="@+id/optionsButton"
         android:layout_width="wrap_content"

@@ -13,6 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.example.parking.databinding.ActivityMainBinding
+import com.example.parking.ui.home.HomeFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.home, R.id.incident
+                R.id.home, R.id.addIncidentFragment
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -46,10 +47,19 @@ class MainActivity : AppCompatActivity() {
                     logout()
                     true
                 }
+                R.id.addIncidentFragment -> {
+                    findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.addIncidentFragment)
+                    drawerLayout.closeDrawers()
+                    true
+                }
+                R.id.home -> {
+                    findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.home)
+                    drawerLayout.closeDrawers()
+                    true
+                }
                 else -> false
             }
         }
-
     }
 
     private fun logout() {
