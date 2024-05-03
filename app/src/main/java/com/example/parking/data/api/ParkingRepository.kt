@@ -1,4 +1,4 @@
-package com.example.parking.data.api
+/*package com.example.parking.data.api
 
 import android.util.Log
 import com.example.parking.data.db.incidents.Incident
@@ -20,12 +20,15 @@ class ParkingRepository @Inject constructor(private val service: ParkingService)
             val incident = apiService.map { incident ->
                 Incident(
                     incident.id,
+                    incident.uuid,
+                    incident.categoryName,
                     incident.title,
                     incident.description,
-                    incident.status,
-                    incident.user,
                     incident.image,
-                    incident.imageType
+                    incident.date,
+                    incident.checked,
+                    incident.resolved,
+                    incident.userId
                 )
             }
 
@@ -38,4 +41,4 @@ class ParkingRepository @Inject constructor(private val service: ParkingService)
         }
     }
 
-}
+}*/

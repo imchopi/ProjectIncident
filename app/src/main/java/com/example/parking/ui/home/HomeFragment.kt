@@ -13,12 +13,18 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.parking.data.db.incidents.Incident
 import com.example.parking.databinding.FragmentHomeBinding
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
+    private lateinit var auth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: HomeViewModel by viewModels()
 
@@ -38,18 +44,50 @@ class HomeFragment : Fragment() {
         val adapter = HomeAdapter(requireContext(), ::toDetail)
         val recyclerView = binding.incidents
         recyclerView.adapter = adapter
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect {
-                    Log.d("Temilla", "El tema: " + adapter.submitList(it.incident))
-                    adapter.submitList(it.incident)
+
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val userId = currentUser?.uid
+
+        userId?.let { userId ->
+            firestore = Firebase.firestore
+            firestore.collection("incidentsInfo")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    val incidentsList = mutableListOf<Incident>()
+                    for (document in querySnapshot) {
+                        val data = document.data
+                        val uuid = data["uuid"] as? String ?: ""
+                        val categoryName = data["categoryName"] as? String ?: ""
+                        val title = data["title"] as? String ?: ""
+                        val description = data["description"] as? String ?: ""
+                        val image = data["image"] as? String
+                        val date = data["date"]?.toString() ?: ""
+                        val checked = data["checked"] as? Boolean ?: false
+                        val resolved = data["resolved"] as? Boolean ?: false
+
+                        val incident = Incident(
+                            uuid = uuid,
+                            categoryName = categoryName,
+                            title = title,
+                            description = description,
+                            image = image,
+                            date = date,
+                            checked = checked,
+                            resolved = resolved,
+                            userId = userId
+                        )
+                        incidentsList.add(incident)
+                    }
+                    adapter.submitList(incidentsList)
+                }.addOnFailureListener { exception ->
+                    Log.e("Firestore", "Error fetching documents: $exception")
                 }
-            }
         }
     }
 
     fun toDetail (incident: Incident) {
-        val action = incident.id?.let { HomeFragmentDirections.actionHomeToDetailFragment(it) }
+        val action = incident.uuid?.let { HomeFragmentDirections.actionHomeToDetailFragment(it) }
         if (action != null) {
             findNavController().navigate(action)
         }

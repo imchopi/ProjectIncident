@@ -10,6 +10,11 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class ParkingApplication: Application(), ImageLoaderFactory {
+
+    override fun onCreate() {
+        super.onCreate()
+    }
+
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(this)
             .memoryCache {

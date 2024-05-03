@@ -20,7 +20,7 @@ import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
-interface ParkingApi {
+/*interface ParkingApi {
     @GET("/csrf")
     suspend fun getCsrf(): Csrf
 
@@ -65,4 +65,4 @@ class AuthInterceptor @Inject constructor(private val authHeader: IncidentHolder
             .build()
         return chain.proceed(modifiedRequest)
     }
-}
+}*/

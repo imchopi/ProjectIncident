@@ -9,7 +9,7 @@ import com.example.parking.data.db.incidents.IncidentsEntity
 import com.example.parking.data.db.users.UsersDao
 import com.example.parking.data.db.users.UsersEntity
 
-@Database(entities = [IncidentsEntity::class, UsersEntity::class], version = 1)
+@Database(entities = [IncidentsEntity::class, UsersEntity::class], version = 3)
 abstract class ParkingDatabase : RoomDatabase() {
     abstract fun usersDao(): UsersDao
     abstract fun incidentsDao(): IncidentsDao
@@ -31,7 +31,7 @@ abstract class ParkingDatabase : RoomDatabase() {
                 context.applicationContext,
                 ParkingDatabase::class.java,
                 "parking_db"
-            ).build()
+            ).fallbackToDestructiveMigration().build()
         }
     }
 }

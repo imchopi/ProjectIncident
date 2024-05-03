@@ -2,6 +2,7 @@ package com.example.parking.ui.incident.add
 
 import android.Manifest
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -15,7 +16,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,27 +24,26 @@ import androidx.annotation.RequiresExtension
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.parking.MainActivity
 import com.example.parking.R
-import com.example.parking.data.api.ParkingService
+import com.example.parking.data.db.incidents.Incident
 import com.example.parking.data.db.incidents.IncidentsEntity
-import com.example.parking.data.db.users.UsersEntity
 import com.example.parking.databinding.FragmentAddIncidentBinding
-import com.example.parking.databinding.FragmentHomeBinding
-import com.example.parking.ui.home.HomeFragmentDirections
 import com.example.parking.ui.login.LoginFragmentViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import okhttp3.Credentials
-import java.io.InputStream
-import javax.inject.Inject
+import java.util.Date
 
 @AndroidEntryPoint
 class AddIncidentFragment : Fragment() {
 
+    private lateinit var firestore: FirebaseFirestore
     private var selectedImageUri: Uri? = null
     private val viewModelLogin: LoginFragmentViewModel by viewModels()
     private lateinit var binding: FragmentAddIncidentBinding
@@ -98,12 +97,25 @@ class AddIncidentFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.button.setOnClickListener {
-            val credentials = Credentials.basic("nuevo@gmail.com", "Admin123")
             val title = binding.titleEditText.text.toString()
             val description = binding.textEditText.text.toString()
             val image = binding.imageView.setImageURI(selectedImageUri).toString()
             Log.d("Foto", "Foto $image")
-            val incident = IncidentsEntity(2, title, description, "", 1, image)
+            val id = 1
+            val uuid = "2"
+            val date = Date().toString()
+
+            val incident = IncidentsEntity(
+                id,
+                uuid,
+                "Network",
+                title,
+                description,
+                "",
+                date,
+                false,
+                false,
+                "" )
             registerIncident(incident)
             findNavController().navigate(AddIncidentFragmentDirections.actionAddIncidentFragmentToHome())
         }
@@ -116,14 +128,46 @@ class AddIncidentFragment : Fragment() {
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    private fun registerIncident(incident: IncidentsEntity) {
+    private fun registerIncident(incidentInfo: IncidentsEntity) {
         lifecycleScope.launch {
             try {
-                val credentials = Credentials.basic("nuevo@gmail.com", "Admin123")
-                viewModelLogin.addIncident(incident)
-                val intent = Intent(requireActivity(), MainActivity::class.java)
-                requireActivity().startActivity(intent)
-                requireActivity().finish()
+                val firebaseAuth = FirebaseAuth.getInstance()
+                val currentUser = firebaseAuth.currentUser
+                val uid = currentUser?.uid ?: ""
+                val incident = Incident(
+                    incidentInfo.id,
+                    incidentInfo.uuid,
+                    incidentInfo.categoryName,
+                    incidentInfo.title,
+                    incidentInfo.description,
+                    incidentInfo.image,
+                    incidentInfo.date,
+                    incidentInfo.checked,
+                    incidentInfo.resolved,
+                    uid,
+                )
+                firestore = Firebase.firestore
+                firestore.collection("incidentsInfo")
+                    .add(incident)
+                    .addOnSuccessListener { documentReference ->
+                        val uuid = documentReference.id
+                        incident.uuid = uuid
+                        documentReference.update("uuid", uuid)
+                            .addOnSuccessListener {
+                                Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w(ContentValues.TAG, "Error writing document", e)
+                            }
+                    }
+                    .addOnCompleteListener {
+                        val intent = Intent(requireActivity(), MainActivity::class.java)
+                        requireActivity().startActivity(intent)
+                        requireActivity().finish()
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(ContentValues.TAG, "Error adding document", e)
+                    }
             } catch (e: HttpException) {
                 Log.e("Error", "Error al registrarse: ${e.message}")
             }

@@ -6,25 +6,32 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "incidents")
 data class IncidentsEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = 2,
+    val id: Int,
+    val uuid: String,
+    val categoryName: String = "Network",
     val title: String,
     val description: String,
-    val status: String,
-    val user: Int,
     val image: String? = "",
-    val imageType: String? = ""
-)
+    val date: String,
+    val checked: Boolean = false,
+    val resolved: Boolean = false,
+    val userId: String,
+
+    )
 
 fun List<IncidentsEntity>.asIncident():List<Incident> {
     return this.map {
         Incident(
             it.id,
+            it.uuid,
+            it.categoryName,
             it.title,
             it.description,
-            it.status,
-            it.user,
             it.image,
-            it.imageType
+            it.date,
+            it.checked,
+            it.resolved,
+            it.userId,
         )
     }
 }

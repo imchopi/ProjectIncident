@@ -22,8 +22,8 @@ class HomeViewModel @Inject constructor(private val repository: Repository): Vie
     init {
         viewModelScope.launch {
             try {
-                repository.refreshList()
-                Log.d("Temilla", "El tema: " + repository.refreshList().toString())
+                /*repository.refreshList()
+                Log.d("Temilla", "El tema: " + repository.refreshList().toString())*/
             }
             catch (e: IOException) {
                 _uiState.value = _uiState.value.copy(errorMessage = e.message)

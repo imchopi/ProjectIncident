@@ -1,7 +1,6 @@
 package com.example.parking.data.repository
 
 import android.util.Log
-import com.example.parking.data.api.ParkingRepository
 import com.example.parking.data.api.asEntityModel
 import com.example.parking.data.db.incidents.Incident
 import com.example.parking.data.db.incidents.IncidentsDBRepository
@@ -21,7 +20,7 @@ import javax.inject.Singleton
 class Repository @Inject constructor(
     private val usersDBRepository: UsersDBRepository,
     private val incidentsDBRepository: IncidentsDBRepository,
-    private val apiRepository: ParkingRepository
+    /*private val apiRepository: ParkingRepository*/
 ) {
     val incident: Flow<List<Incident>>
         get(){
@@ -32,7 +31,7 @@ class Repository @Inject constructor(
             return list
         }
 
-    suspend fun refreshList() {
+    /*suspend fun refreshList() {
         withContext(Dispatchers.IO) {
             try {
                 val apiParking = apiRepository.getIncidents()
@@ -42,7 +41,7 @@ class Repository @Inject constructor(
                 // Manejar cualquier excepción
             }
         }
-    }
+    }*/
 
     suspend fun addIncident(incident: IncidentsEntity){
         incidentsDBRepository.insert(incident)

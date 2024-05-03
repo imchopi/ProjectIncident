@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.parking.data.api.ParkingRepository
 import com.example.parking.data.db.incidents.Incident
 import com.example.parking.data.db.incidents.IncidentsEntity
 import com.example.parking.data.repository.Repository
@@ -19,7 +18,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class AddIncidentViewModel @Inject constructor(private val repository: Repository, private val parkingRepository: ParkingRepository): ViewModel() {
+class AddIncidentViewModel @Inject constructor(private val repository: Repository): ViewModel() {
     private val _photoUri = MutableStateFlow<Uri?>(null)
     val photoUri: StateFlow<Uri?> get() = _photoUri
 

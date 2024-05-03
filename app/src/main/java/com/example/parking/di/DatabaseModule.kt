@@ -1,8 +1,6 @@
 package com.example.parking.di
 
 import android.content.Context
-import com.example.parking.data.api.AuthInterceptor
-import com.example.parking.data.api.ParkingService
 import com.example.parking.data.api.UserLogin
 import com.example.parking.data.db.ParkingDatabase
 import com.example.parking.data.db.incidents.IncidentsDao
@@ -36,12 +34,6 @@ object DatabaseModule {
     @Provides
     fun provideUsersDao(database: ParkingDatabase): UsersDao {
         return database.usersDao()
-    }
-
-    @Singleton
-    @Provides
-    fun provideParkingService(interceptor: AuthInterceptor): ParkingService {
-        return ParkingService(interceptor)
     }
 
 }
