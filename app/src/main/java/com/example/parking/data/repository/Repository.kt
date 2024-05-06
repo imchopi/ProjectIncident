@@ -1,7 +1,6 @@
 package com.example.parking.data.repository
 
 import android.util.Log
-import com.example.parking.data.api.asEntityModel
 import com.example.parking.data.db.incidents.Incident
 import com.example.parking.data.db.incidents.IncidentsDBRepository
 import com.example.parking.data.db.incidents.IncidentsEntity

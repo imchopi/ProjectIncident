@@ -11,7 +11,7 @@ data class IncidentsEntity(
     val categoryName: String = "Network",
     val title: String,
     val description: String,
-    val image: String? = "",
+    var image: String? = "",
     val date: String,
     val checked: Boolean = false,
     val resolved: Boolean = false,
@@ -22,7 +22,6 @@ data class IncidentsEntity(
 fun List<IncidentsEntity>.asIncident():List<Incident> {
     return this.map {
         Incident(
-            it.id,
             it.uuid,
             it.categoryName,
             it.title,

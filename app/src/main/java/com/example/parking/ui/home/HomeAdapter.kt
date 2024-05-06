@@ -31,7 +31,7 @@ class HomeAdapter(
 
 
     private object IncidentDiffCallback: DiffUtil.ItemCallback<Incident>() {
-        override fun areItemsTheSame(oldItem: Incident, newItem: Incident) = oldItem.id == newItem.id
+        override fun areItemsTheSame(oldItem: Incident, newItem: Incident) = oldItem.uuid == newItem.uuid
         override fun areContentsTheSame(oldItem: Incident, newItem: Incident) = oldItem == newItem
     }
 

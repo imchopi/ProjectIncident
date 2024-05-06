@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.net.http.HttpException
 import android.os.Build
@@ -36,9 +38,12 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import java.util.Date
+import java.util.UUID
 
 @AndroidEntryPoint
 class AddIncidentFragment : Fragment() {
@@ -101,23 +106,20 @@ class AddIncidentFragment : Fragment() {
             val description = binding.textEditText.text.toString()
             val image = binding.imageView.setImageURI(selectedImageUri).toString()
             Log.d("Foto", "Foto $image")
-            val id = 1
             val uuid = "2"
             val date = Date().toString()
 
-            val incident = IncidentsEntity(
-                id,
+            val incident = Incident(
                 uuid,
                 "Network",
                 title,
                 description,
-                "",
+                image,
                 date,
                 false,
                 false,
                 "" )
             registerIncident(incident)
-            findNavController().navigate(AddIncidentFragmentDirections.actionAddIncidentFragmentToHome())
         }
         binding.galleryButton.setOnClickListener {
             requestPermission()
@@ -128,48 +130,91 @@ class AddIncidentFragment : Fragment() {
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    private fun registerIncident(incidentInfo: IncidentsEntity) {
-        lifecycleScope.launch {
-            try {
-                val firebaseAuth = FirebaseAuth.getInstance()
-                val currentUser = firebaseAuth.currentUser
-                val uid = currentUser?.uid ?: ""
-                val incident = Incident(
-                    incidentInfo.id,
-                    incidentInfo.uuid,
-                    incidentInfo.categoryName,
-                    incidentInfo.title,
-                    incidentInfo.description,
-                    incidentInfo.image,
-                    incidentInfo.date,
-                    incidentInfo.checked,
-                    incidentInfo.resolved,
-                    uid,
-                )
-                firestore = Firebase.firestore
-                firestore.collection("incidentsInfo")
-                    .add(incident)
-                    .addOnSuccessListener { documentReference ->
-                        val uuid = documentReference.id
-                        incident.uuid = uuid
-                        documentReference.update("uuid", uuid)
-                            .addOnSuccessListener {
-                                Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!")
+    private fun registerIncident(incidentInfo: Incident) {
+        if (incidentInfo.title.isBlank() || incidentInfo.description.isBlank()) {
+            // Mostrar un mensaje de error si alguno de los campos está vacío
+            Toast.makeText(
+                requireContext(),
+                "Por favor, completa todos los campos",
+                Toast.LENGTH_SHORT
+            ).show()
+            return // Salir de la función sin registrar el incidente
+        } else {
+            lifecycleScope.launch {
+                try {
+                    firestore = Firebase.firestore
+                    val firebaseAuth = FirebaseAuth.getInstance()
+                    val currentUser = firebaseAuth.currentUser
+                    val uid = currentUser?.uid ?: ""
+                    val storageRef = FirebaseStorage.getInstance().reference
+                    val imageRef = storageRef.child("images/${UUID.randomUUID()}")
+                    // Comprobar si hay una imagen seleccionada
+                    selectedImageUri?.let { uri ->
+                        val inputStream = requireContext().contentResolver.openInputStream(uri)
+                        val bitmap = BitmapFactory.decodeStream(inputStream)
+                        val outputStream = ByteArrayOutputStream()
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream) // Ajusta la calidad según necesites (0-100)
+                        val imageData = outputStream.toByteArray()
+                        imageRef.putBytes(imageData)
+                            .addOnSuccessListener { uploadTask ->
+                                // Obtener la URL de descarga de la imagen
+                                uploadTask.storage.downloadUrl.addOnSuccessListener { downloadUri ->
+                                    // Actualizar la URL de la imagen en el objeto del incidente
+                                    val imageUrl = downloadUri.toString()
+                                    incidentInfo.image = imageUrl
+
+                                    // Crear el objeto Incident con la URL de la imagen actualizada
+                                    val incident = Incident(
+                                        incidentInfo.uuid,
+                                        incidentInfo.categoryName,
+                                        incidentInfo.title,
+                                        incidentInfo.description,
+                                        imageUrl,
+                                        incidentInfo.date,
+                                        incidentInfo.checked,
+                                        incidentInfo.resolved,
+                                        uid,
+                                    )
+
+                                    // Guardar el incidente en Firestore
+                                    firestore = Firebase.firestore
+                                    firestore.collection("incidentsInfo")
+                                        .add(incident)
+                                        .addOnSuccessListener { documentReference ->
+                                            val uuid = documentReference.id
+                                            incident.uuid = uuid
+                                            documentReference.update("uuid", uuid)
+                                                .addOnSuccessListener {
+                                                    Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!")
+                                                }
+                                                .addOnFailureListener { e ->
+                                                    Log.w(ContentValues.TAG, "Error writing document", e)
+                                                }
+                                        }
+                                        .addOnCompleteListener {
+                                            val intent = Intent(requireActivity(), MainActivity::class.java)
+                                            requireActivity().startActivity(intent)
+                                            requireActivity().finish()
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Log.w(ContentValues.TAG, "Error adding document", e)
+                                        }
+                                }
                             }
                             .addOnFailureListener { e ->
-                                Log.w(ContentValues.TAG, "Error writing document", e)
+                                Log.e("Error", "Error al cargar la imagen: ${e.message}")
                             }
+                    } ?: run {
+                        // Si no hay ninguna imagen seleccionada, mostrar un mensaje de error
+                        Toast.makeText(
+                            requireContext(),
+                            "Por favor, selecciona una imagen",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                    .addOnCompleteListener {
-                        val intent = Intent(requireActivity(), MainActivity::class.java)
-                        requireActivity().startActivity(intent)
-                        requireActivity().finish()
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w(ContentValues.TAG, "Error adding document", e)
-                    }
-            } catch (e: HttpException) {
-                Log.e("Error", "Error al registrarse: ${e.message}")
+                } catch (e: HttpException) {
+                    Log.e("Error", "Error al registrarse: ${e.message}")
+                }
             }
         }
     }

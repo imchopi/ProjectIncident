@@ -2,15 +2,17 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/blue">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/incidents"
-        android:layout_marginTop="75dp"
         android:layout_width="match_parent"
         android:layout_height="622dp"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="90dp"
         android:paddingHorizontal="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:background="@color/blue"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

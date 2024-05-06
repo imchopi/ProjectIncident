@@ -50,13 +50,21 @@ class RegisterFragment : Fragment() {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val registerUsername = binding.nickname
+        val registerName = binding.name
+        val registerSurname = binding.firstSurname
+        val registerEmail = binding.email
+        val registerPassword = binding.password
+        val registerRol = binding.rol
+
         binding.registerButton.setOnClickListener {
-            val username = binding.nickname.text.toString()
-            val name = binding.name.text.toString()
-            val surname = binding.firstSurname.text.toString()
-            val email = binding.email.text.toString()
-            val password = binding.password.text.toString()
-            val rol = binding.rol.text.toString()
+            val username = registerUsername.text.toString()
+            val name = registerName.text.toString()
+            val surname = registerSurname.text.toString()
+            val email = registerEmail.text.toString()
+            val password = registerPassword.text.toString()
+            val rol = registerRol.text.toString()
 
             val id = 2
             val uuid = "2"

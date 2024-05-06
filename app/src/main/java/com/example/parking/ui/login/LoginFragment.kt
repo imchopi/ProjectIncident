@@ -40,9 +40,12 @@ class LoginFragment : Fragment() {
     ): View? {
         binding = FragmentLoginBinding.inflate(inflater,container,false)
 
+        val loginUsernameEditText = binding.loginUsername
+        val loginPasswordEditText = binding.loginPassword
+
         binding.registerLogin.setOnClickListener {
-            val username = binding.loginUsername.text.toString()
-            val password = binding.loginPassword.text.toString()
+            val username = loginUsernameEditText.text.toString()
+            val password = loginPasswordEditText.text.toString()
             login(username, password)
         }
 
@@ -51,6 +54,26 @@ class LoginFragment : Fragment() {
 
 
     private fun login(username: String, password: String) {
+        if (username.isBlank()) {
+            // Usuario no proporcionado, muestra un mensaje de error
+            Toast.makeText(
+                requireContext(),
+                "Por favor, introduce un nombre de usuario",
+                Toast.LENGTH_SHORT
+            ).show()
+            return // Salir de la función sin intentar iniciar sesión
+        }
+
+        if (password.isBlank()) {
+            // Contraseña no proporcionada, muestra un mensaje de error
+            Toast.makeText(
+                requireContext(),
+                "Por favor, introduce una contraseña",
+                Toast.LENGTH_SHORT
+            ).show()
+            return // Salir de la función sin intentar iniciar sesión
+        }
+
         lifecycleScope.launch {
             auth = Firebase.auth
             auth.signInWithEmailAndPassword(username, password)

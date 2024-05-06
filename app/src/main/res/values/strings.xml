@@ -28,4 +28,6 @@
     <string name="menu_register">Sign up</string>
     <string name="menu_login">Login</string>
     <string name="menu_logout">Logout</string>
+    <string name="register">Done!</string>
+    <string name="login">Login</string>
 </resources>
