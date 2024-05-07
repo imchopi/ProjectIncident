@@ -11,6 +11,7 @@ import com.example.parking.data.db.users.UsersEntity
 
 @Database(entities = [IncidentsEntity::class, UsersEntity::class], version = 3)
 abstract class ParkingDatabase : RoomDatabase() {
+    // Defines abstract methods to access DAOs
     abstract fun usersDao(): UsersDao
     abstract fun incidentsDao(): IncidentsDao
 
@@ -18,6 +19,7 @@ abstract class ParkingDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: ParkingDatabase? = null
 
+        // Singleton pattern to get an instance of the database
         fun getInstance(context: Context): ParkingDatabase {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: buildDatabase(context).also {
@@ -26,6 +28,7 @@ abstract class ParkingDatabase : RoomDatabase() {
             }
         }
 
+        // Builds the database
         private fun buildDatabase(context: Context): ParkingDatabase {
             return Room.databaseBuilder(
                 context.applicationContext,

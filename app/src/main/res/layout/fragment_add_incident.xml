@@ -13,98 +13,106 @@
     tools:context=".ui.incident.add.AddIncidentFragment"
     android:background="@color/blue">
 
-    <!-- Campo para añadir una imagen -->
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:src="@android:drawable/ic_menu_gallery"
+        app:layout_constraintBottom_toTopOf="@+id/titleInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/titleEditText"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Campo para el título -->
-    <EditText
-        android:id="@+id/titleEditText"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/titleInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:hint="Título"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:hintEnabled="true"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView">
 
-    <!-- Campo para el texto -->
-    <EditText
-        android:id="@+id/textEditText"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="200dp"
-        android:hint="Texto"
-        android:inputType="textMultiLine"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleEditText" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/titleEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Título" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Botón para desplegar opciones -->
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        app:hintEnabled="true"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleInputLayout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/textEditText"
+            android:layout_width="match_parent"
+            android:layout_height="195dp"
+            android:hint="Texto"
+            android:inputType="textMultiLine" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
         android:text="Enviar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textEditText"
+
         app:layout_constraintVertical_bias="0.238" />
 
     <ImageButton
         android:id="@+id/optionsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_gravity="end"
-        android:src="@drawable/ic_menu_slideshow"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/textEditText" />
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/ic_menu_camera"
+        tools:ignore="MissingConstraints" />
 
     <!-- Contenedor para botones adicionales (inicialmente invisible) -->
     <LinearLayout
         android:id="@+id/optionsContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
         android:orientation="vertical"
         android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/optionsButton">
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toStartOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Botón para la cámara -->
         <Button
             android:id="@+id/cameraButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tomar Foto"
-            android:layout_gravity="end"/>
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_gravity="end"
+            android:text="Cámara" />
 
-        <!-- Botón para la galería -->
         <Button
             android:id="@+id/galleryButton"
-            android:layout_width="131dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
             android:layout_gravity="end"
             android:text="Galería" />
     </LinearLayout>

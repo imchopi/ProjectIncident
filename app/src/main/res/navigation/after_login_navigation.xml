@@ -20,7 +20,7 @@
     <fragment
         android:id="@+id/detailFragment"
         android:name="com.example.parking.ui.home.detail.DetailFragment"
-        android:label="fragment_detail"
+        android:label="Detalles"
         tools:layout="@layout/fragment_detail" >
         <argument
             android:name="id"
@@ -30,7 +30,7 @@
     <fragment
         android:id="@+id/addIncidentFragment"
         android:name="com.example.parking.ui.incident.add.AddIncidentFragment"
-        android:label="AddIncidentFragment">
+        android:label="Añadir Incidente">
         <action
             android:id="@+id/action_addIncidentFragment_to_cameraFragment"
             app:destination="@id/cameraFragment" />
@@ -42,8 +42,8 @@
     <fragment
         android:id="@+id/cameraFragment"
         android:name="com.example.parking.ui.incident.add.camera.CameraFragment"
-        android:label="fragment_camera"
-        tools:layout="@layout/fragment_camera" >
+        android:label="Cámara"
+        tools:layout="@layout/fragment_camera">
         <action
             android:id="@+id/action_cameraFragment_to_addIncidentFragment"
             app:destination="@id/addIncidentFragment" />

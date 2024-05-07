@@ -13,44 +13,47 @@ import androidx.annotation.RequiresExtension
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.parking.MainActivity
-import com.example.parking.data.db.users.User
 import com.example.parking.data.db.users.UserInfo
 import com.example.parking.data.db.users.UsersEntity
 import com.example.parking.databinding.FragmentRegisterBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-
+// Fragment for user registration
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
 
+    // View binding instance
     private lateinit var binding: FragmentRegisterBinding
+
+    // Firebase Authentication instance
     private lateinit var auth: FirebaseAuth
+
+    // Firebase Firestore instance
     private lateinit var firestore: FirebaseFirestore
 
-
+    // Called to create the fragment's view hierarchy
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        // Inflate the layout for this fragment using view binding
         binding = FragmentRegisterBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-
-
+    // Called after the fragment's view is created
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Initialize UI components
         val registerUsername = binding.nickname
         val registerName = binding.name
         val registerSurname = binding.firstSurname
@@ -58,6 +61,7 @@ class RegisterFragment : Fragment() {
         val registerPassword = binding.password
         val registerRol = binding.rol
 
+        // Set click listener for register button
         binding.registerButton.setOnClickListener {
             val username = registerUsername.text.toString()
             val name = registerName.text.toString()
@@ -66,31 +70,38 @@ class RegisterFragment : Fragment() {
             val password = registerPassword.text.toString()
             val rol = registerRol.text.toString()
 
-            val id = 2
-            val uuid = "2"
-            val picture = "algo"
-
+            // Create a new user data object
+            val uuid = "2" // Sample UUID
+            val picture = "algo" // Sample picture
             val userData = UsersEntity(id, uuid, username, name, picture, surname, email, password, rol)
 
+            // Register the user
             registerUser(userData)
         }
     }
 
+    // Function to register a new user
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     private fun registerUser(userData: UsersEntity) {
         lifecycleScope.launch {
+            // Initialize Firebase Authentication
             auth = Firebase.auth
+            // Create user with email and password
             auth.createUserWithEmailAndPassword(userData.email, userData.password)
                 .addOnCompleteListener(requireActivity()) { task ->
                     if (task.isSuccessful) {
+                        // Registration successful
                         Log.d(TAG, "createUserWithEmail:success")
+                        // Create user info object
                         val userInfo = UserInfo(userData.uuid, userData.username, userData.name, userData.picture, userData.surname, userData.email, userData.role)
+                        // Write user data to Firestore
                         writeNewUser(userInfo)
-                        val user = auth.currentUser
+                        // Navigate to MainActivity upon successful registration
                         val intent = Intent(requireActivity(), MainActivity::class.java)
                         requireActivity().startActivity(intent)
                         requireActivity().finish()
                     } else {
+                        // Registration failed
                         Log.w(TAG, "createUserWithEmail:failure", task.exception)
                         Toast.makeText(
                             requireContext(),
@@ -99,13 +110,16 @@ class RegisterFragment : Fragment() {
                         ).show()
                     }
                 }
-
         }
     }
 
+    // Function to write user data to Firestore
     fun writeNewUser(userData: UserInfo) {
+        // Create user info object
         val user = UserInfo(userData.uuid, userData.username, userData.name, userData.picture, userData.surname, userData.email, userData.role)
+        // Initialize Firebase Firestore
         firestore = Firebase.firestore
+        // Add user info to the "userInfo" collection in Firestore
         firestore.collection("userInfo")
             .add(user)
             .addOnSuccessListener { documentReference ->

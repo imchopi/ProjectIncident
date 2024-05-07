@@ -19,7 +19,8 @@ class DetailFragment : Fragment() {
 
     private lateinit var binding: FragmentDetailBinding
     private val viewModel: DetailViewModel by viewModels()
-    val args: DetailFragmentArgs by navArgs()
+    private val args: DetailFragmentArgs by navArgs()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -31,15 +32,21 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Using viewLifecycleOwner.lifecycleScope to launch a coroutine tied to the Fragment's lifecycle
         viewLifecycleOwner.lifecycleScope.launch {
+            // Repeat the following block while the Fragment's lifecycle is at least in STARTED state
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Call viewModel.getIncident(args.id) to fetch incident details
                 viewModel.getIncident(args.id)
+
+                // Collect the incident detail from the viewModel
                 viewModel.incidentDetail.collect { incident ->
+                    // Update UI with incident details
                     binding.title.text = incident.title
                     binding.description.text = incident.description
                 }
             }
         }
     }
-
 }

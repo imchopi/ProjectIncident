@@ -1,5 +1,6 @@
 package com.example.parking.ui.home.detail
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parking.data.repository.Repository
@@ -15,36 +16,38 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
+    // Firestore instance to interact with Firebase Firestore
     private lateinit var firestore: FirebaseFirestore
+
+    // MutableStateFlow to emit UI state changes
     private val _incidentDetail = MutableStateFlow(DetailUiState())
+
+    // Exposed as StateFlow to observe UI state changes
     val incidentDetail: StateFlow<DetailUiState>
         get() = _incidentDetail.asStateFlow()
 
-    /*fun getIncident (id: Int){
-        viewModelScope.launch {
-            repository.getIncident(id).collect(){
-                incident -> _incidentDetail.value = DetailUiState(
-                 0,
-                    incident.title,
-                    incident.description,
-                )
-            }
-        }
-    }*/
+    // Function to fetch incident details from Firestore
     fun getIncident (uuid: String) {
         viewModelScope.launch {
+            // Initialize Firestore instance
             firestore = Firebase.firestore
+
+            // Fetch incident details from Firestore
             firestore.collection("incidentsInfo").document(uuid).get().addOnSuccessListener { documentSnapshot ->
+                // Parse data from document snapshot
                 val data = documentSnapshot.data
                 val title = data?.get("title") as? String ?: ""
                 val description = data?.get("description") as? String ?: ""
+
+                // Update UI state with the fetched incident details
                 _incidentDetail.value = DetailUiState(
-                    0, // Si necesitas el ID, puedes pasarlo aquí
+                    0,
                     title,
                     description
                 )
             }.addOnFailureListener { exception ->
-                // Manejar la falla en la obtención de datos, si es necesario
+                // Log any errors that occur during fetching
+                Log.e("Error", "Error al cargar la imagen: ${exception.message}")
             }
         }
     }

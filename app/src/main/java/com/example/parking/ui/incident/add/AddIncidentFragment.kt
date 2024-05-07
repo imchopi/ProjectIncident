@@ -1,6 +1,7 @@
 package com.example.parking.ui.incident.add
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
@@ -31,9 +32,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.parking.MainActivity
 import com.example.parking.R
 import com.example.parking.data.db.incidents.Incident
-import com.example.parking.data.db.incidents.IncidentsEntity
 import com.example.parking.databinding.FragmentAddIncidentBinding
-import com.example.parking.ui.login.LoginFragmentViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -48,48 +47,61 @@ import java.util.UUID
 @AndroidEntryPoint
 class AddIncidentFragment : Fragment() {
 
+    // Firebase Firestore instance
     private lateinit var firestore: FirebaseFirestore
+
+    // Selected image URI
     private var selectedImageUri: Uri? = null
-    private val viewModelLogin: LoginFragmentViewModel by viewModels()
+
+    // View binding for the fragment layout
     private lateinit var binding: FragmentAddIncidentBinding
+
+    // UI components
     private lateinit var optionsContainer: LinearLayout
     private lateinit var cameraButton: Button
     private lateinit var galleryButton: Button
+
+    // View model
     private val viewModel: AddIncidentViewModel by activityViewModels()
+
+    // Called when the fragment is created
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
+    // Called to create the fragment's view hierarchy
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Inflate the layout for this fragment
         binding = FragmentAddIncidentBinding.inflate(inflater, container, false)
 
+        // Initialize UI components
         optionsContainer = binding.optionsContainer.findViewById(R.id.optionsContainer)
         cameraButton = binding.cameraButton.findViewById(R.id.cameraButton)
         galleryButton = binding.galleryButton.findViewById(R.id.galleryButton)
 
+        // Set click listener for options button
         val optionsButton: ImageButton = binding.optionsButton.findViewById(R.id.optionsButton)
         optionsButton.setOnClickListener {
             toggleOptionsVisibility()
         }
 
+        // Observe photo URI changes and update image view accordingly
         val imageView = binding.imageView
-
-        // Observar cambios en el StateFlow y actualizar el ImageView
         lifecycleScope.launch {
             viewModel.photoUri.collect { uri ->
-                // Actualizar el ImageView con la nueva URI
                 uri?.let {
                     imageView?.setImageURI(uri)
                 }
             }
         }
-
         return binding.root
     }
 
+    // Function to toggle visibility of options container
     private fun toggleOptionsVisibility() {
         if (optionsContainer.visibility == View.VISIBLE) {
             optionsContainer.visibility = View.INVISIBLE
@@ -97,18 +109,28 @@ class AddIncidentFragment : Fragment() {
             optionsContainer.visibility = View.VISIBLE
         }
     }
+
+    // Called when the fragment's view has been created
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Initialize UI components and set click listeners
+        val addTitle = binding.titleEditText
+        val addDescription = binding.textEditText
+        val addImage = binding.imageView
+
         binding.button.setOnClickListener {
-            val title = binding.titleEditText.text.toString()
-            val description = binding.textEditText.text.toString()
-            val image = binding.imageView.setImageURI(selectedImageUri).toString()
+            val title = addTitle.text.toString()
+            val description = addDescription.text.toString()
+            val image =
+                addImage.setImageURI(selectedImageUri).toString() // This line needs correction
             Log.d("Foto", "Foto $image")
             val uuid = "2"
             val date = Date().toString()
 
+            // Create an Incident object
             val incident = Incident(
                 uuid,
                 "Network",
@@ -118,9 +140,14 @@ class AddIncidentFragment : Fragment() {
                 date,
                 false,
                 false,
-                "" )
+                ""
+            )
+
+            // Register the incident
             registerIncident(incident)
         }
+
+        // Set click listeners for gallery and camera buttons
         binding.galleryButton.setOnClickListener {
             requestPermission()
         }
@@ -129,41 +156,39 @@ class AddIncidentFragment : Fragment() {
         }
     }
 
+    // Function to register an incident
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     private fun registerIncident(incidentInfo: Incident) {
         if (incidentInfo.title.isBlank() || incidentInfo.description.isBlank()) {
-            // Mostrar un mensaje de error si alguno de los campos está vacío
             Toast.makeText(
                 requireContext(),
-                "Por favor, completa todos los campos",
+                "Please fill in all fields",
                 Toast.LENGTH_SHORT
             ).show()
-            return // Salir de la función sin registrar el incidente
+            return
         } else {
             lifecycleScope.launch {
                 try {
+                    // Initialize Firebase Firestore and other necessary objects
                     firestore = Firebase.firestore
                     val firebaseAuth = FirebaseAuth.getInstance()
                     val currentUser = firebaseAuth.currentUser
                     val uid = currentUser?.uid ?: ""
                     val storageRef = FirebaseStorage.getInstance().reference
                     val imageRef = storageRef.child("images/${UUID.randomUUID()}")
-                    // Comprobar si hay una imagen seleccionada
+
+                    // Handle image upload
                     selectedImageUri?.let { uri ->
                         val inputStream = requireContext().contentResolver.openInputStream(uri)
                         val bitmap = BitmapFactory.decodeStream(inputStream)
                         val outputStream = ByteArrayOutputStream()
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream) // Ajusta la calidad según necesites (0-100)
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
                         val imageData = outputStream.toByteArray()
                         imageRef.putBytes(imageData)
                             .addOnSuccessListener { uploadTask ->
-                                // Obtener la URL de descarga de la imagen
                                 uploadTask.storage.downloadUrl.addOnSuccessListener { downloadUri ->
-                                    // Actualizar la URL de la imagen en el objeto del incidente
                                     val imageUrl = downloadUri.toString()
                                     incidentInfo.image = imageUrl
-
-                                    // Crear el objeto Incident con la URL de la imagen actualizada
                                     val incident = Incident(
                                         incidentInfo.uuid,
                                         incidentInfo.categoryName,
@@ -175,8 +200,7 @@ class AddIncidentFragment : Fragment() {
                                         incidentInfo.resolved,
                                         uid,
                                     )
-
-                                    // Guardar el incidente en Firestore
+                                    // Add incident to Firestore
                                     firestore = Firebase.firestore
                                     firestore.collection("incidentsInfo")
                                         .add(incident)
@@ -185,14 +209,23 @@ class AddIncidentFragment : Fragment() {
                                             incident.uuid = uuid
                                             documentReference.update("uuid", uuid)
                                                 .addOnSuccessListener {
-                                                    Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!")
+                                                    Log.d(
+                                                        ContentValues.TAG,
+                                                        "DocumentSnapshot successfully written!"
+                                                    )
                                                 }
                                                 .addOnFailureListener { e ->
-                                                    Log.w(ContentValues.TAG, "Error writing document", e)
+                                                    Log.w(
+                                                        ContentValues.TAG,
+                                                        "Error writing document",
+                                                        e
+                                                    )
                                                 }
                                         }
                                         .addOnCompleteListener {
-                                            val intent = Intent(requireActivity(), MainActivity::class.java)
+                                            // Navigate back to main activity after incident registration
+                                            val intent =
+                                                Intent(requireActivity(), MainActivity::class.java)
                                             requireActivity().startActivity(intent)
                                             requireActivity().finish()
                                         }
@@ -202,18 +235,17 @@ class AddIncidentFragment : Fragment() {
                                 }
                             }
                             .addOnFailureListener { e ->
-                                Log.e("Error", "Error al cargar la imagen: ${e.message}")
+                                Log.e("Error", "Error uploading image: ${e.message}")
                             }
                     } ?: run {
-                        // Si no hay ninguna imagen seleccionada, mostrar un mensaje de error
                         Toast.makeText(
                             requireContext(),
-                            "Por favor, selecciona una imagen",
+                            "Please select an image",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
                 } catch (e: HttpException) {
-                    Log.e("Error", "Error al registrarse: ${e.message}")
+                    Log.e("Error", "Error registering incident: ${e.message}")
                 }
             }
         }
@@ -221,35 +253,47 @@ class AddIncidentFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun requestPermission() {
+        // Check if the device's SDK version is greater than or equal to Marshmallow (API 23)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Check if permission to read external storage is already granted
             when {
                 ContextCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.READ_EXTERNAL_STORAGE
                 ) == PackageManager.PERMISSION_GRANTED -> {
+                    // If permission is already granted, pick a photo from the gallery
                     pickPhotoFromGallery()
                 }
-                else -> requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                else -> {
+                    // If permission is not granted, request permission using the permission launcher
+                    requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                }
             }
         } else {
+            // If device's SDK version is lower than Marshmallow, directly pick a photo from the gallery
             pickPhotoFromGallery()
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun pickPhotoFromGallery() {
+        // Create an intent to pick an image from the gallery
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "image/*"
+
+        // Launch the activity for result using ActivityResultContracts
         startForFragmentGallery.launch(intent)
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
     private val startForFragmentGallery = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ){ result ->
-        if (result.resultCode == Activity.RESULT_OK){
+    ) { result ->
+        // Handle the result of picking an image from the gallery
+        if (result.resultCode == Activity.RESULT_OK) {
             val data = result.data?.data
             selectedImageUri = data
+            // Set the selected image URI to the image view
             binding.imageView.setImageURI(data)
         }
     }
@@ -257,12 +301,14 @@ class AddIncidentFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.P)
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) {isGranted ->
-        if (isGranted){
+    ) { isGranted ->
+        // Handle the result of the permission request for gallery access
+        if (isGranted) {
+            // If permission is granted, pick photo from the gallery
             pickPhotoFromGallery()
-        }else {
-            Toast.makeText(requireContext(),"algo", Toast.LENGTH_SHORT).show()
+        } else {
+            // If permission is denied, show a toast message
+            Toast.makeText(requireContext(), "algo", Toast.LENGTH_SHORT).show()
         }
-
     }
 }

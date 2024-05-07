@@ -5,51 +5,29 @@ import com.example.parking.data.db.incidents.Incident
 import com.example.parking.data.db.incidents.IncidentsDBRepository
 import com.example.parking.data.db.incidents.IncidentsEntity
 import com.example.parking.data.db.incidents.asIncident
-import com.example.parking.data.db.users.User
-import com.example.parking.data.db.users.UsersDBRepository
-import com.example.parking.data.db.users.UsersEntity
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class Repository @Inject constructor(
-    private val usersDBRepository: UsersDBRepository,
     private val incidentsDBRepository: IncidentsDBRepository,
-    /*private val apiRepository: ParkingRepository*/
 ) {
+    // Exposes a Flow of Incidents to observe changes
     val incident: Flow<List<Incident>>
         get(){
+            // Maps the Flow of IncidentsEntity to a Flow of Incident using the extension function asIncident()
             val list = incidentsDBRepository.incidents.map {
                 it.asIncident()
             }
+            // Logs the result for debugging
             Log.d("TemillaTemaTema", "El tema: $list")
             return list
         }
 
-    /*suspend fun refreshList() {
-        withContext(Dispatchers.IO) {
-            try {
-                val apiParking = apiRepository.getIncidents()
-                Log.d("TemillaTema", "El tema: $apiParking")
-                incidentsDBRepository.insertAll(apiParking.asEntityModel())
-            } catch (e: Exception) {
-                // Manejar cualquier excepción
-            }
-        }
-    }*/
-
+    // Adds an incident to the database
     suspend fun addIncident(incident: IncidentsEntity){
         incidentsDBRepository.insert(incident)
     }
-
-    suspend fun addUser(user: UsersEntity){
-        usersDBRepository.insert(user)
-    }
-
-    suspend fun getIncident(id: Int) = incidentsDBRepository.getIncidentById(id)
-
 }

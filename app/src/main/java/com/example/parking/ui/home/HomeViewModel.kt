@@ -9,34 +9,30 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val repository: Repository): ViewModel() {
 
+    // MutableStateFlow to hold the UI state
     private val _uiState = MutableStateFlow(HomeUiState(listOf()))
+
+    // Expose the UI state as StateFlow to observe changes
     val uiState: StateFlow<HomeUiState>
         get() = _uiState.asStateFlow()
 
+    // Initialize the ViewModel
     init {
+        // Launch a coroutine in the viewModelScope to collect data from the repository
         viewModelScope.launch {
-            try {
-                /*repository.refreshList()
-                Log.d("Temilla", "El tema: " + repository.refreshList().toString())*/
-            }
-            catch (e: IOException) {
-                _uiState.value = _uiState.value.copy(errorMessage = e.message)
-            }
-        }
-
-        viewModelScope.launch {
-            repository.incident.collect() {
-
-
-                _uiState.value = HomeUiState(it)
+            // Collect incidents data from the repository
+            repository.incident.collect() { incidents ->
+                // Update the UI state with the collected data
+                _uiState.value = HomeUiState(incidents)
+                // Log the updated UI state (for debugging purposes)
                 Log.d("Temilla", "El tema: " + _uiState.value.incident)
             }
         }
     }
 }
+
