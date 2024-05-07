@@ -24,6 +24,7 @@ Previamente reciclé parte de un proyecto que hice de un Parking, con lo cual al
 - Modo offline con Firebase
 - Comprobación de inputs en el registro
 - Filtrar por categoría
+- Cambiar nombre del proyecto
 
 ### Bibliografía usada
 
