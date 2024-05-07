@@ -1,4 +1,4 @@
-## Diseño inicial (hubo alteraciones desde el diseño al video final)
+### Diseño inicial (hubo alteraciones desde el diseño al video final)
 
 [Enlace a Figma](https://www.figma.com/file/RbhNW7L3FnECijbmcXBhSU/Untitled?type=design&node-id=0-1&mode=design&t=hFcrKQQai9hJStWj-0)
 
