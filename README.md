@@ -1,4 +1,4 @@
-### Video de la APP
+### Video de la APP - CHATO
 [Video de la APP](https://www.youtube.com/watch?v=yJ3HbtzjHZA)
 
 ### Diseño inicial (hubo alteraciones desde el diseño al video final)
