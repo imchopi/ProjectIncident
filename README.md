@@ -22,12 +22,9 @@ Previamente reciclé parte de un proyecto que hice de un Parking, con lo cual al
 
 ### Tareas pendientes por hacer
 
-- Eliminar incidencias (Pendiente para hacer en Junio)
 - Mostrar detalles del usuario en el menú
-- Modo offline con Firebase
+- Modo offline con Room
 - Comprobación de inputs en el registro
-- Filtrar por categoría
-- Cambiar nombre del proyecto
 
 ### Bibliografía usada
 
