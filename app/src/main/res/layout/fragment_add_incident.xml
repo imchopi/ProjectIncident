@@ -41,29 +41,35 @@
             android:id="@+id/titleEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Título" />
+            android:hint="@string/title" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Botón para desplegar opciones -->
+    <Spinner
+        android:id="@+id/category"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleInputLayout" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="16dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="20dp"
         app:hintEnabled="true"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleInputLayout">
+        app:layout_constraintTop_toBottomOf="@+id/category">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/textEditText"
             android:layout_width="match_parent"
-            android:layout_height="195dp"
-            android:hint="Texto"
+            android:layout_height="139dp"
+            android:hint="@string/description"
             android:inputType="textMultiLine" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -74,11 +80,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
-        android:text="Enviar"
+        android:text="@string/send"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-
         app:layout_constraintVertical_bias="0.238" />
 
     <ImageButton
@@ -90,7 +95,6 @@
         android:src="@drawable/ic_menu_camera"
         tools:ignore="MissingConstraints" />
 
-    <!-- Contenedor para botones adicionales (inicialmente invisible) -->
     <LinearLayout
         android:id="@+id/optionsContainer"
         android:layout_width="0dp"
@@ -107,14 +111,14 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:layout_gravity="end"
-            android:text="Cámara" />
+            android:text="@string/camera" />
 
         <Button
             android:id="@+id/galleryButton"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:layout_gravity="end"
-            android:text="Galería" />
+            android:text="@string/gallery" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

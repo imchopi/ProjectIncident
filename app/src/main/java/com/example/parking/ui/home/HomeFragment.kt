@@ -7,14 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.parking.data.db.incidents.Incident
+import com.example.parking.data.db.incidents.IncidentsEntity
 import com.example.parking.databinding.FragmentHomeBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -60,7 +65,8 @@ class HomeFragment : Fragment() {
                 .whereEqualTo("userId", userId)
                 .get()
                 .addOnSuccessListener { querySnapshot ->
-                    val incidentsList = mutableListOf<Incident>()
+                    val incidentsList = mutableListOf<IncidentsEntity>()
+                    val incidentAdapter = mutableListOf<Incident>()
                     for (document in querySnapshot) {
                         val data = document.data
                         val uuid = data["uuid"] as? String ?: ""
@@ -71,6 +77,18 @@ class HomeFragment : Fragment() {
                         val date = data["date"]?.toString() ?: ""
                         val checked = data["checked"] as? Boolean ?: false
                         val resolved = data["resolved"] as? Boolean ?: false
+
+                        val incidentEntity = IncidentsEntity(
+                            uuid = uuid,
+                            categoryName = categoryName,
+                            title = title,
+                            description = description,
+                            image = image,
+                            date = date,
+                            checked = checked,
+                            resolved = resolved,
+                            userId = userId
+                        )
 
                         val incident = Incident(
                             uuid = uuid,
@@ -83,10 +101,18 @@ class HomeFragment : Fragment() {
                             resolved = resolved,
                             userId = userId
                         )
-                        incidentsList.add(incident)
+                        incidentsList.add(incidentEntity)
+                        incidentAdapter.add(incident)
                     }
                     // Submit the list of incidents to the adapter
-                    adapter.submitList(incidentsList)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        repeatOnLifecycle(Lifecycle.State.STARTED) {
+                            viewModel.uiState.collect {
+                                adapter.submitList(incidentAdapter)
+                            }
+                        }
+                    }
+                    viewModel.insertAll(incidentsList)
                 }.addOnFailureListener { exception ->
                     // Log any errors that occur during fetching
                     Log.e("Firestore", "Error fetching documents: $exception")

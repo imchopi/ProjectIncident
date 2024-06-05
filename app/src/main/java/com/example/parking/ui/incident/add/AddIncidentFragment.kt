@@ -17,9 +17,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -49,6 +51,7 @@ class AddIncidentFragment : Fragment() {
 
     // Firebase Firestore instance
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var category: Spinner
 
     // Selected image URI
     private var selectedImageUri: Uri? = null
@@ -82,6 +85,7 @@ class AddIncidentFragment : Fragment() {
         optionsContainer = binding.optionsContainer.findViewById(R.id.optionsContainer)
         cameraButton = binding.cameraButton.findViewById(R.id.cameraButton)
         galleryButton = binding.galleryButton.findViewById(R.id.galleryButton)
+        category = binding.category
 
         // Set click listener for options button
         val optionsButton: ImageButton = binding.optionsButton.findViewById(R.id.optionsButton)
@@ -115,25 +119,27 @@ class AddIncidentFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // Initialize UI components and set click listeners
+        val spinner = binding.category
         val addTitle = binding.titleEditText
         val addDescription = binding.textEditText
         val addImage = binding.imageView
 
+        setupCategorySpinner()
+
         binding.button.setOnClickListener {
             val title = addTitle.text.toString()
             val description = addDescription.text.toString()
-            val image =
-                addImage.setImageURI(selectedImageUri).toString() // This line needs correction
+            val image = addImage.setImageURI(selectedImageUri).toString()
             Log.d("Foto", "Foto $image")
             val uuid = "2"
             val date = Date().toString()
+            val category = spinner.selectedItem as String
 
             // Create an Incident object
             val incident = Incident(
                 uuid,
-                "Network",
+                category,
                 title,
                 description,
                 image,
@@ -169,7 +175,6 @@ class AddIncidentFragment : Fragment() {
         } else {
             lifecycleScope.launch {
                 try {
-                    // Initialize Firebase Firestore and other necessary objects
                     firestore = Firebase.firestore
                     val firebaseAuth = FirebaseAuth.getInstance()
                     val currentUser = firebaseAuth.currentUser
@@ -177,7 +182,6 @@ class AddIncidentFragment : Fragment() {
                     val storageRef = FirebaseStorage.getInstance().reference
                     val imageRef = storageRef.child("images/${UUID.randomUUID()}")
 
-                    // Handle image upload
                     selectedImageUri?.let { uri ->
                         val inputStream = requireContext().contentResolver.openInputStream(uri)
                         val bitmap = BitmapFactory.decodeStream(inputStream)
@@ -200,8 +204,6 @@ class AddIncidentFragment : Fragment() {
                                         incidentInfo.resolved,
                                         uid,
                                     )
-                                    // Add incident to Firestore
-                                    firestore = Firebase.firestore
                                     firestore.collection("incidentsInfo")
                                         .add(incident)
                                         .addOnSuccessListener { documentReference ->
@@ -223,9 +225,7 @@ class AddIncidentFragment : Fragment() {
                                                 }
                                         }
                                         .addOnCompleteListener {
-                                            // Navigate back to main activity after incident registration
-                                            val intent =
-                                                Intent(requireActivity(), MainActivity::class.java)
+                                            val intent = Intent(requireActivity(), MainActivity::class.java)
                                             requireActivity().startActivity(intent)
                                             requireActivity().finish()
                                         }
@@ -249,6 +249,21 @@ class AddIncidentFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun setupCategorySpinner() {
+        firestore = Firebase.firestore
+        firestore.collection("categoryInfo")
+            .get()
+            .addOnSuccessListener { documents ->
+                val categoryNames = documents.map { it.getString("name") ?: "Unnamed" }
+                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categoryNames)
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                category.adapter = adapter
+            }
+            .addOnFailureListener { e ->
+                Log.w(ContentValues.TAG, "Error getting categories", e)
+            }
     }
 
     @RequiresApi(Build.VERSION_CODES.P)

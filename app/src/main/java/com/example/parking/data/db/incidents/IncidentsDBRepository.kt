@@ -24,7 +24,7 @@ class IncidentsDBRepository @Inject constructor(private val incidentDao: Inciden
 
     // Retrieves an incident by its ID from the database as a Flow, allowing for observation of changes
     @WorkerThread
-    suspend fun getIncidentById(id: Int): Flow<IncidentsEntity> {
-        return incidentDao.getIncidentById(id)
+    suspend fun getIncidentByUuid(uuid: String): Flow<IncidentsEntity> {
+        return incidentDao.getIncidentByUuid(uuid)
     }
 }

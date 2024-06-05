@@ -59,7 +59,7 @@ class RegisterFragment : Fragment() {
         val registerSurname = binding.firstSurname
         val registerEmail = binding.email
         val registerPassword = binding.password
-        val registerRol = binding.rol
+        val registerConfirmPassword = binding.confirmPassword
 
         // Set click listener for register button
         binding.registerButton.setOnClickListener {
@@ -68,15 +68,22 @@ class RegisterFragment : Fragment() {
             val surname = registerSurname.text.toString()
             val email = registerEmail.text.toString()
             val password = registerPassword.text.toString()
-            val rol = registerRol.text.toString()
+            val confirmPassword = registerConfirmPassword.text.toString()
 
-            // Create a new user data object
-            val uuid = "2" // Sample UUID
-            val picture = "algo" // Sample picture
-            val userData = UsersEntity(id, uuid, username, name, picture, surname, email, password, rol)
+            // Check if all fields are filled
+            if (username.isEmpty() || name.isEmpty() || surname.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(requireContext(), "Please fill in all fields.", Toast.LENGTH_SHORT).show()
+            } else if (password != confirmPassword) {
+                Toast.makeText(requireContext(), "Use the same password", Toast.LENGTH_SHORT).show()
+            } else {
+                // Create a new user data object
+                val uuid = "2" // Sample UUID
+                val picture = "algo" // Sample picture
+                val userData = UsersEntity(id, uuid, username, name, picture, surname, email, password, "user")
 
-            // Register the user
-            registerUser(userData)
+                // Register the user
+                registerUser(userData)
+            }
         }
     }
 
@@ -92,10 +99,23 @@ class RegisterFragment : Fragment() {
                     if (task.isSuccessful) {
                         // Registration successful
                         Log.d(TAG, "createUserWithEmail:success")
-                        // Create user info object
-                        val userInfo = UserInfo(userData.uuid, userData.username, userData.name, userData.picture, userData.surname, userData.email, userData.role)
-                        // Write user data to Firestore
-                        writeNewUser(userInfo)
+                        // Get the Firebase Auth UID
+                        val uid = auth.currentUser?.uid
+                        if (uid != null) {
+                            // Create user info object
+                            val userInfo = UserInfo(
+                                uid, // Use Firebase Auth UID here
+                                userData.username,
+                                userData.name,
+                                userData.picture,
+                                userData.surname,
+                                userData.email,
+                                userData.role
+                            )
+                            // Write user data to Firestore
+                            writeNewUser(userInfo)
+                        }
+
                         // Navigate to MainActivity upon successful registration
                         val intent = Intent(requireActivity(), MainActivity::class.java)
                         requireActivity().startActivity(intent)
@@ -115,26 +135,19 @@ class RegisterFragment : Fragment() {
 
     // Function to write user data to Firestore
     fun writeNewUser(userData: UserInfo) {
-        // Create user info object
-        val user = UserInfo(userData.uuid, userData.username, userData.name, userData.picture, userData.surname, userData.email, userData.role)
         // Initialize Firebase Firestore
-        firestore = Firebase.firestore
-        // Add user info to the "userInfo" collection in Firestore
-        firestore.collection("userInfo")
-            .add(user)
-            .addOnSuccessListener { documentReference ->
-                val uuid = documentReference.id
-                user.uuid = uuid
-                documentReference.update("uuid", uuid)
-                    .addOnSuccessListener {
-                        Log.d(TAG, "DocumentSnapshot successfully written!")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w(TAG, "Error writing document", e)
-                    }
+        val firestore = Firebase.firestore
+
+        // Use the Firebase Auth UID as the document ID
+        val documentReference = firestore.collection("userInfo").document(userData.uuid)
+
+        // Set the document data
+        documentReference.set(userData)
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully written!")
             }
             .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
+                Log.w(TAG, "Error writing document", e)
             }
     }
 }

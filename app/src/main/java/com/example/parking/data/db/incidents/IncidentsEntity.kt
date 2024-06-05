@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "incidents")
 data class IncidentsEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Long? = 0,
     val uuid: String,
     val categoryName: String = "Network",
     val title: String,
@@ -16,7 +16,6 @@ data class IncidentsEntity(
     val checked: Boolean = false,
     val resolved: Boolean = false,
     val userId: String,
-
     )
 
 fun List<IncidentsEntity>.asIncident():List<Incident> {

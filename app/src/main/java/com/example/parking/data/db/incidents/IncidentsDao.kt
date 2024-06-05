@@ -21,6 +21,6 @@ interface IncidentsDao {
     fun getIncidents(): Flow<List<IncidentsEntity>>
 
     // Retrieves an incident by its ID from the database as a Flow, allowing for observation of changes
-    @Query("SELECT * FROM incidents WHERE id= :id")
-    fun getIncidentById(id: Int): Flow<IncidentsEntity>
+    @Query("SELECT * FROM incidents WHERE uuid= :uuid")
+    fun getIncidentByUuid(uuid: String): Flow<IncidentsEntity>
 }

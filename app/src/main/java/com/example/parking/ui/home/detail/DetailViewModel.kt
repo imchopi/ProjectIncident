@@ -38,12 +38,16 @@ class DetailViewModel @Inject constructor(private val repository: Repository) : 
                 val data = documentSnapshot.data
                 val title = data?.get("title") as? String ?: ""
                 val description = data?.get("description") as? String ?: ""
+                val picture = data?.get("image") as? String ?: ""
+                val category = data?.get("categoryName") as? String ?: ""
 
                 // Update UI state with the fetched incident details
                 _incidentDetail.value = DetailUiState(
                     0,
+                    picture,
                     title,
-                    description
+                    description,
+                    category
                 )
             }.addOnFailureListener { exception ->
                 // Log any errors that occur during fetching

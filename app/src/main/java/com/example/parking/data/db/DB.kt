@@ -9,7 +9,7 @@ import com.example.parking.data.db.incidents.IncidentsEntity
 import com.example.parking.data.db.users.UsersDao
 import com.example.parking.data.db.users.UsersEntity
 
-@Database(entities = [IncidentsEntity::class, UsersEntity::class], version = 3)
+@Database(entities = [IncidentsEntity::class, UsersEntity::class], version = 4)
 abstract class ParkingDatabase : RoomDatabase() {
     // Defines abstract methods to access DAOs
     abstract fun usersDao(): UsersDao

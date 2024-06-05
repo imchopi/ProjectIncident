@@ -58,13 +58,13 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Check and request necessary permissions for camera usage
         if (allPermissionsGranted()) {
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
                 requireActivity(),
-                REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
+                REQUIRED_PERMISSIONS,
+                REQUEST_CODE_PERMISSIONS
             )
         }
 
@@ -74,6 +74,8 @@ class CameraFragment : Fragment() {
         // Initialize the camera executor service
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
+
+
 
     // Function to capture a photo
     @RequiresApi(Build.VERSION_CODES.P)

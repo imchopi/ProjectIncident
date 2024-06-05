@@ -5,8 +5,10 @@ import com.example.parking.data.db.incidents.Incident
 import com.example.parking.data.db.incidents.IncidentsDBRepository
 import com.example.parking.data.db.incidents.IncidentsEntity
 import com.example.parking.data.db.incidents.asIncident
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,7 +29,12 @@ class Repository @Inject constructor(
         }
 
     // Adds an incident to the database
-    suspend fun addIncident(incident: IncidentsEntity){
+    suspend fun addIncident(incident: IncidentsEntity) {
         incidentsDBRepository.insert(incident)
+    }
+
+    // Inserts a list of incidents into the database
+    suspend fun insertAll(listIncidentEntity: List<IncidentsEntity>) {
+        incidentsDBRepository.insertAll(listIncidentEntity)
     }
 }

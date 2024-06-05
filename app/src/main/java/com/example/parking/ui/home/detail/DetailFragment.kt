@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.example.parking.databinding.FragmentDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -33,6 +34,8 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val addImage = binding.image
+
         // Using viewLifecycleOwner.lifecycleScope to launch a coroutine tied to the Fragment's lifecycle
         viewLifecycleOwner.lifecycleScope.launch {
             // Repeat the following block while the Fragment's lifecycle is at least in STARTED state
@@ -45,6 +48,10 @@ class DetailFragment : Fragment() {
                     // Update UI with incident details
                     binding.title.text = incident.title
                     binding.description.text = incident.description
+                    binding.category.text = incident.category
+                    Glide.with(this@DetailFragment)
+                        .load(incident.picture)
+                        .into(addImage)
                 }
             }
         }
