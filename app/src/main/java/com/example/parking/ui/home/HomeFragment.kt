@@ -22,6 +22,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
+/**
+ * A fragment representing the home screen of the app, displaying a list of incidents.
+ */
 class HomeFragment : Fragment() {
 
     // Declaring variables for Firebase authentication and Firestore
@@ -34,7 +37,14 @@ class HomeFragment : Fragment() {
     // View model for handling data operations
     private val viewModel: HomeViewModel by viewModels()
 
-    // Called to create the fragment's view hierarchy
+    /**
+     * Called to create the fragment's view hierarchy.
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container The parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
+     * @return The View for the fragment's UI, or null.
+     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,7 +55,12 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
-    // Called immediately after onCreateView() has returned
+    /**
+     * Called immediately after onCreateView() has returned.
+     *
+     * @param view The View returned by onCreateView().
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -115,12 +130,16 @@ class HomeFragment : Fragment() {
                     viewModel.insertAll(incidentsList)
                 }.addOnFailureListener { exception ->
                     // Log any errors that occur during fetching
-                    Log.e("Firestore", "Error fetching documents: $exception")
+                    Log.e("Firestore", exception.toString())
                 }
         }
     }
 
-    // Function to navigate to detail fragment when an incident is clicked
+    /**
+     * Function to navigate to the detail fragment when an incident is clicked.
+     *
+     * @param incident The incident that was clicked.
+     */
     fun toDetail(incident: Incident) {
         // Create the navigation action to the detail fragment
         val action = incident.uuid?.let { HomeFragmentDirections.actionHomeToDetailFragment(it) }

@@ -8,11 +8,11 @@
     <fragment
         android:id="@+id/login"
         android:name="com.example.parking.ui.login.LoginFragment"
-        android:label="Login"
+        android:label="@string/loginFragment"
         tools:layout="@layout/fragment_login" />
     <fragment
         android:id="@+id/register"
         android:name="com.example.parking.ui.register.RegisterFragment"
-        android:label="Registro"
+        android:label="@string/registerFragment"
         tools:layout="@layout/fragment_register" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.example.parking.data.db.users
+/*package com.example.parking.data.db.users
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -15,4 +15,4 @@ interface UsersDao {
     // Retrieves all users from the database as a Flow, allowing for observation of changes
     @Query("SELECT * FROM users")
     fun getUsers(): Flow<List<UsersEntity>>
-}
+}*/

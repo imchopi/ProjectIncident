@@ -51,7 +51,7 @@ class DetailViewModel @Inject constructor(private val repository: Repository) : 
                 )
             }.addOnFailureListener { exception ->
                 // Log any errors that occur during fetching
-                Log.e("Error", "Error al cargar la imagen: ${exception.message}")
+                exception.message?.let { Log.e("Error", it) }
             }
         }
     }

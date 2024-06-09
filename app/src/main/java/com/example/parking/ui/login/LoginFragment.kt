@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.example.parking.MainActivity
+import com.example.parking.R
 import com.example.parking.databinding.FragmentLoginBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -39,7 +40,7 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment using view binding
-        binding = FragmentLoginBinding.inflate(inflater,container,false)
+        binding = FragmentLoginBinding.inflate(inflater, container, false)
 
         // Initialize UI components
         val loginUsernameEditText = binding.loginUsername
@@ -56,13 +57,18 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
-    // Function to handle user login
+    /**
+     * Attempt to log in with the given username and password.
+     *
+     * @param username The username for the login attempt.
+     * @param password The password for the login attempt.
+     */
     private fun login(username: String, password: String) {
         // Check if username is blank
         if (username.isBlank()) {
             Toast.makeText(
                 requireContext(),
-                "Please enter a username",
+                getString(R.string.usernameLogin),
                 Toast.LENGTH_SHORT
             ).show()
             return
@@ -72,7 +78,7 @@ class LoginFragment : Fragment() {
         if (password.isBlank()) {
             Toast.makeText(
                 requireContext(),
-                "Please enter a password",
+                getString(R.string.passwordLogin),
                 Toast.LENGTH_SHORT
             ).show()
             return
@@ -85,7 +91,7 @@ class LoginFragment : Fragment() {
                 .addOnCompleteListener(requireActivity()) { task ->
                     if (task.isSuccessful) {
                         // Login successful
-                        Log.d(ContentValues.TAG, "signInWithEmail:success")
+                        Log.d(ContentValues.TAG, getString(R.string.createEmail))
                         val user = auth.currentUser
                         // Navigate to MainActivity upon successful login
                         val intent = Intent(requireActivity(), MainActivity::class.java)
@@ -93,10 +99,10 @@ class LoginFragment : Fragment() {
                         requireActivity().finish()
                     } else {
                         // Login failed
-                        Log.w(ContentValues.TAG, "signInWithEmail:failure", task.exception)
+                        Log.w(ContentValues.TAG, getString(R.string.createEmailFailure), task.exception)
                         Toast.makeText(
                             requireContext(),
-                            "Authentication failed.",
+                            getString(R.string.authentication),
                             Toast.LENGTH_SHORT,
                         ).show()
                     }

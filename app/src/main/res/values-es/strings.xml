@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Parking</string>
+    <string name="app_name">Chato</string>
     <string name="navigation_drawer_open">Abrir Navegación</string>
     <string name="navigation_drawer_close">Cerrar navegación</string>
     <string name="nav_header_title">Android Studio</string>
@@ -37,4 +37,33 @@
     <string name="addIncident">Nuevo Incidente</string>
     <string name="detail">Detalles</string>
     <string name="photo">Foto</string>
+    <string name="loginFragment">Logueo</string>
+    <string name="registerFragment">Registrarse</string>
+    <string name="error_fill_fields">Por favor, complete todos los campos.</string>
+    <string name="error_password_mismatch">Las contraseñas no coinciden.</string>
+    <string name="dialog_error_title">Error</string>
+    <string name="dialog_error_positive_button">OK</string>
+    <string name="usernameLogin">Por favor introduzca un usuario</string>
+    <string name="passwordLogin">Por favor introduzca una contraseña</string>
+    <string name="authentication">Autenticación fallida</string>
+    <string name="snapshot">Snapshot del documento hecho</string>
+    <string name="errorDocument">Error escribiendo en el documento</string>
+    <string name="permissions">El usuario no tiene los permisos</string>
+    <string name="noSuchDocument">No existe el documento</string>
+    <string name="gettingDocument">Error recibiendo documento</string>
+    <string name="notFound">No encontrado</string>
+    <string name="gettingCategory">Error recibiendo categoría</string>
+    <string name="createUser">createUserWithEmail:finalizado</string>
+    <string name="createEmail">signInWithEmail:finalizado</string>
+    <string name="createEmailFailure">signInWithEmail:fallido</string>
+    <string name="registeringIncident">Error registrando el incidencte</string>
+    <string name="selectImage">Seleccione una imagen</string>
+    <string name="addingDocument">Error añadiendo el documento</string>
+    <string name="writingDocument">Error escribiendo el documento</string>
+    <string name="writtenDocumentSnapshot">Snapshot del documento finalizado</string>
+    <string name="fillFields">Rellene los campos</string>
+    <string name="permissionsUser">El usuario no tiene los permisos</string>
+    <string name="bindingFailed">Fallo en el binding</string>
+    <string name="photoCaptureFailed">Captura de foto errónea</string>
+    <string name="insertingIncidents">Error insertando incidentes</string>
 </resources>

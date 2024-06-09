@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.navigation.fragment.findNavController
-import com.example.parking.databinding.FragmentCameraBinding
 import android.Manifest
 import android.content.ContentValues
 import android.content.pm.PackageManager
@@ -22,11 +21,16 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import com.example.parking.R
+import com.example.parking.databinding.FragmentCameraBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+/**
+ * A Fragment that handles camera operations, including capturing photos and requesting permissions.
+ */
 class CameraFragment : Fragment() {
 
     // View binding for the fragment layout
@@ -38,7 +42,14 @@ class CameraFragment : Fragment() {
     // Executor service for running camera operations
     private lateinit var cameraExecutor: ExecutorService
 
-    // Called to create the fragment's view hierarchy
+    /**
+     * Called to create the fragment's view hierarchy.
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container The parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
+     * @return The View for the fragment's UI, or null.
+     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,11 +64,17 @@ class CameraFragment : Fragment() {
         return viewBinding.root
     }
 
-    // Called immediately after onCreateView() has returned
+    /**
+     * Called immediately after onCreateView() has returned.
+     *
+     * @param view The View returned by onCreateView().
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
+     */
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Check for camera permissions and start camera if granted
         if (allPermissionsGranted()) {
             startCamera()
         } else {
@@ -75,9 +92,9 @@ class CameraFragment : Fragment() {
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
-
-
-    // Function to capture a photo
+    /**
+     * Function to capture a photo.
+     */
     @RequiresApi(Build.VERSION_CODES.P)
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
@@ -102,7 +119,7 @@ class CameraFragment : Fragment() {
             requireContext().mainExecutor,
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
-                    Log.d(TAG, "Photo capture failed: ${exc.message}", exc)
+                    Log.d(TAG, getString(R.string.photoCaptureFailed), exc)
                 }
                 override fun onImageSaved(output: ImageCapture.OutputFileResults){
                     val msg = "Photo capture succeeded: ${output.savedUri}"
@@ -113,7 +130,9 @@ class CameraFragment : Fragment() {
         )
     }
 
-    // Function to start the camera
+    /**
+     * Function to start the camera.
+     */
     @RequiresApi(Build.VERSION_CODES.P)
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
@@ -131,12 +150,18 @@ class CameraFragment : Fragment() {
                 cameraProvider.bindToLifecycle(
                     this, cameraSelector, imageCapture, preview)
             } catch(exc: Exception) {
-                Log.d(TAG, "Use case binding failed", exc)
+                Log.d(TAG, getString(R.string.bindingFailed), exc)
             }
         }, requireContext().mainExecutor)
     }
 
-    // Function to handle permission request results
+    /**
+     * Function to handle permission request results.
+     *
+     * @param requestCode The request code passed to requestPermissions().
+     * @param permissions The requested permissions.
+     * @param grantResults The grant results for the corresponding permissions.
+     */
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults:
@@ -146,19 +171,25 @@ class CameraFragment : Fragment() {
                 startCamera()
             } else {
                 Toast.makeText(requireContext(),
-                    "Permissions not granted by the user.",
+                    getString(R.string.permissionsUser),
                     Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    // Function to check if all required permissions are granted
+    /**
+     * Function to check if all required permissions are granted.
+     *
+     * @return True if all permissions are granted, false otherwise.
+     */
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             requireContext(), it) == PackageManager.PERMISSION_GRANTED
     }
 
-    // Function to clean up resources when the fragment is destroyed
+    /**
+     * Function to clean up resources when the fragment is destroyed.
+     */
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()

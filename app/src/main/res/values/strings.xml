@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Parking</string>
+    <string name="app_name">Chato</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -38,4 +38,33 @@
     <string name="addIncident">New Incident</string>
     <string name="detail">Details</string>
     <string name="photo">Photo</string>
+    <string name="loginFragment">Login</string>
+    <string name="registerFragment">Register</string>
+    <string name="error_fill_fields">Please fill in all fields.</string>
+    <string name="error_password_mismatch">Passwords do not match.</string>
+    <string name="dialog_error_title">Error</string>
+    <string name="dialog_error_positive_button">OK</string>
+    <string name="usernameLogin">Please enter a username</string>
+    <string name="passwordLogin">Please enter a password</string>
+    <string name="authentication">Authentication failed</string>
+    <string name="snapshot">DocumentSnapshot successfully written!</string>
+    <string name="errorDocument">Error writing document</string>
+    <string name="permissions">Permissions not granted by the user.</string>
+    <string name="noSuchDocument">No such document</string>
+    <string name="gettingDocument">Error getting document</string>
+    <string name="notFound">Not found</string>
+    <string name="gettingCategory">Error getting category</string>
+    <string name="createUser">createUserWithEmail:success</string>
+    <string name="createEmail">signInWithEmail:success</string>
+    <string name="createEmailFailure">signInWithEmail:failure</string>
+    <string name="registeringIncident">Error registering incident</string>
+    <string name="selectImage">Please select an image</string>
+    <string name="addingDocument">Error adding document</string>
+    <string name="writingDocument">Error writing document</string>
+    <string name="writtenDocumentSnapshot">DocumentSnapshot successfully written!</string>
+    <string name="fillFields">Please fill in all fields</string>
+    <string name="permissionsUser">Permissions not granted by the user.</string>
+    <string name="bindingFailed">Use case binding failed</string>
+    <string name="photoCaptureFailed">Photo capture failed</string>
+    <string name="insertingIncidents">Error inserting incidents</string>
 </resources>

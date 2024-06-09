@@ -16,25 +16,40 @@ import javax.inject.Singleton
 class Repository @Inject constructor(
     private val incidentsDBRepository: IncidentsDBRepository,
 ) {
-    // Exposes a Flow of Incidents to observe changes
+
+    /**
+     * Exposes a Flow of incidents to observe changes.
+     *
+     * This property maps the Flow of `IncidentsEntity` from the database repository
+     * to a Flow of `Incident` objects using the extension function `asIncident()`.
+     *
+     * @return A Flow of `List<Incident>`.
+     */
     val incident: Flow<List<Incident>>
-        get(){
+        get() {
             // Maps the Flow of IncidentsEntity to a Flow of Incident using the extension function asIncident()
             val list = incidentsDBRepository.incidents.map {
                 it.asIncident()
             }
-            // Logs the result for debugging
-            Log.d("TemillaTemaTema", "El tema: $list")
             return list
         }
 
-    // Adds an incident to the database
+    /**
+     * Adds an incident to the database.
+     *
+     * @param incident The `IncidentsEntity` to be added to the database.
+     */
     suspend fun addIncident(incident: IncidentsEntity) {
         incidentsDBRepository.insert(incident)
     }
 
-    // Inserts a list of incidents into the database
+    /**
+     * Inserts a list of incidents into the database.
+     *
+     * @param listIncidentEntity The list of `IncidentsEntity` objects to be inserted into the database.
+     */
     suspend fun insertAll(listIncidentEntity: List<IncidentsEntity>) {
         incidentsDBRepository.insertAll(listIncidentEntity)
     }
 }
+

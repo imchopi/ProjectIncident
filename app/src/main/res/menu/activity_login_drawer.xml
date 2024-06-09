@@ -7,12 +7,12 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/login"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/login"
             android:title="@string/menu_login"
             />
         <item
             android:id="@+id/register"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/account_plus_outline"
             android:title="@string/menu_register" />
     </group>
 </menu>

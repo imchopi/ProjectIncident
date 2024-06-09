@@ -8,12 +8,27 @@ import coil.memory.MemoryCache
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
+/**
+ * The application class for the Parking app, implementing `ImageLoaderFactory` to provide image loading configuration.
+ */
 class ParkingApplication : Application(), ImageLoaderFactory {
 
+    /**
+     * Called when the application is starting, before any other application objects have been created.
+     *
+     * This method is overridden to perform initialization tasks when the app is created.
+     */
     override fun onCreate() {
         super.onCreate()
     }
 
+    /**
+     * Creates and configures a new instance of `ImageLoader`.
+     *
+     * This method sets up the memory and disk cache for the image loader.
+     *
+     * @return A configured `ImageLoader` instance.
+     */
     override fun newImageLoader(): ImageLoader {
         // Configures and returns a new ImageLoader instance
         return ImageLoader.Builder(this)
@@ -31,3 +46,4 @@ class ParkingApplication : Application(), ImageLoaderFactory {
             .build()
     }
 }
+

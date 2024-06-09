@@ -1,4 +1,4 @@
-package com.example.parking.data.db.users
+/*package com.example.parking.data.db.users
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -30,4 +30,4 @@ fun List<UsersEntity>.asUser():List<User> {
             it.role,
         )
     }
-}
+}*/

@@ -18,7 +18,15 @@ data class IncidentsEntity(
     val userId: String,
     )
 
-fun List<IncidentsEntity>.asIncident():List<Incident> {
+/**
+ * Converts a list of `IncidentsEntity` objects to a list of `Incident` objects.
+ *
+ * This function maps each `IncidentsEntity` to an `Incident`, preserving all the relevant properties.
+ *
+ * @receiver The list of `IncidentsEntity` objects to be converted.
+ * @return A list of `Incident` objects.
+ */
+fun List<IncidentsEntity>.asIncident(): List<Incident> {
     return this.map {
         Incident(
             it.uuid,

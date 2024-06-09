@@ -47,11 +47,14 @@ import java.util.Date
 import java.util.UUID
 
 @AndroidEntryPoint
+/**
+ * A Fragment for adding new incidents, including taking pictures, selecting categories,
+ * and registering incidents in Firebase Firestore.
+ */
 class AddIncidentFragment : Fragment() {
 
     // Firebase Firestore instance
     private lateinit var firestore: FirebaseFirestore
-    private lateinit var category: Spinner
 
     // Selected image URI
     private var selectedImageUri: Uri? = null
@@ -64,15 +67,29 @@ class AddIncidentFragment : Fragment() {
     private lateinit var cameraButton: Button
     private lateinit var galleryButton: Button
 
+    // Category spinner
+    private lateinit var category: Spinner
+
     // View model
     private val viewModel: AddIncidentViewModel by activityViewModels()
 
-    // Called when the fragment is created
+    /**
+     * Called when the fragment is created.
+     *
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
-    // Called to create the fragment's view hierarchy
+    /**
+     * Called to create the fragment's view hierarchy.
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container The parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
+     * @return The View for the fragment's UI, or null.
+     */
     @SuppressLint("SuspiciousIndentation")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -105,7 +122,9 @@ class AddIncidentFragment : Fragment() {
         return binding.root
     }
 
-    // Function to toggle visibility of options container
+    /**
+     * Function to toggle visibility of options container.
+     */
     private fun toggleOptionsVisibility() {
         if (optionsContainer.visibility == View.VISIBLE) {
             optionsContainer.visibility = View.INVISIBLE
@@ -114,7 +133,12 @@ class AddIncidentFragment : Fragment() {
         }
     }
 
-    // Called when the fragment's view has been created
+    /**
+     * Called when the fragment's view has been created.
+     *
+     * @param view The View returned by onCreateView().
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
+     */
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -131,7 +155,6 @@ class AddIncidentFragment : Fragment() {
             val title = addTitle.text.toString()
             val description = addDescription.text.toString()
             val image = addImage.setImageURI(selectedImageUri).toString()
-            Log.d("Foto", "Foto $image")
             val uuid = "2"
             val date = Date().toString()
             val category = spinner.selectedItem as String
@@ -162,13 +185,17 @@ class AddIncidentFragment : Fragment() {
         }
     }
 
-    // Function to register an incident
+    /**
+     * Function to register an incident.
+     *
+     * @param incidentInfo The incident information to register.
+     */
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     private fun registerIncident(incidentInfo: Incident) {
         if (incidentInfo.title.isBlank() || incidentInfo.description.isBlank()) {
             Toast.makeText(
                 requireContext(),
-                "Please fill in all fields",
+                getString(R.string.fillFields),
                 Toast.LENGTH_SHORT
             ).show()
             return
@@ -213,13 +240,13 @@ class AddIncidentFragment : Fragment() {
                                                 .addOnSuccessListener {
                                                     Log.d(
                                                         ContentValues.TAG,
-                                                        "DocumentSnapshot successfully written!"
+                                                        getString(R.string.writtenDocumentSnapshot)
                                                     )
                                                 }
                                                 .addOnFailureListener { e ->
                                                     Log.w(
                                                         ContentValues.TAG,
-                                                        "Error writing document",
+                                                        getString(R.string.writingDocument),
                                                         e
                                                     )
                                                 }
@@ -230,27 +257,30 @@ class AddIncidentFragment : Fragment() {
                                             requireActivity().finish()
                                         }
                                         .addOnFailureListener { e ->
-                                            Log.w(ContentValues.TAG, "Error adding document", e)
+                                            Log.w(ContentValues.TAG, getString(R.string.addingDocument), e)
                                         }
                                 }
                             }
                             .addOnFailureListener { e ->
-                                Log.e("Error", "Error uploading image: ${e.message}")
+                                Log.e("Error", "Image error: ${e.message}")
                             }
                     } ?: run {
                         Toast.makeText(
                             requireContext(),
-                            "Please select an image",
+                            getString(R.string.selectImage),
                             Toast.LENGTH_SHORT
                         ).show()
                     }
                 } catch (e: HttpException) {
-                    Log.e("Error", "Error registering incident: ${e.message}")
+                    Log.e("Error",getString(R.string.registeringIncident))
                 }
             }
         }
     }
 
+    /**
+     * Function to set up the category spinner by fetching categories from Firebase Firestore.
+     */
     private fun setupCategorySpinner() {
         firestore = Firebase.firestore
         firestore.collection("categoryInfo")
@@ -262,10 +292,13 @@ class AddIncidentFragment : Fragment() {
                 category.adapter = adapter
             }
             .addOnFailureListener { e ->
-                Log.w(ContentValues.TAG, "Error getting categories", e)
+                Log.w(ContentValues.TAG, getString(R.string.gettingCategory), e)
             }
     }
 
+    /**
+     * Function to request permission to access the gallery.
+     */
     @RequiresApi(Build.VERSION_CODES.P)
     private fun requestPermission() {
         // Check if the device's SDK version is greater than or equal to Marshmallow (API 23)
@@ -290,6 +323,9 @@ class AddIncidentFragment : Fragment() {
         }
     }
 
+    /**
+     * Function to start an activity for picking a photo from the gallery.
+     */
     @RequiresApi(Build.VERSION_CODES.P)
     private fun pickPhotoFromGallery() {
         // Create an intent to pick an image from the gallery
@@ -300,6 +336,9 @@ class AddIncidentFragment : Fragment() {
         startForFragmentGallery.launch(intent)
     }
 
+    /**
+     * Activity result launcher for picking an image from the gallery.
+     */
     @RequiresApi(Build.VERSION_CODES.P)
     private val startForFragmentGallery = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -313,6 +352,9 @@ class AddIncidentFragment : Fragment() {
         }
     }
 
+    /**
+     * Request permission launcher for gallery access.
+     */
     @RequiresApi(Build.VERSION_CODES.P)
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -323,7 +365,7 @@ class AddIncidentFragment : Fragment() {
             pickPhotoFromGallery()
         } else {
             // If permission is denied, show a toast message
-            Toast.makeText(requireContext(), "algo", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.notFound), Toast.LENGTH_SHORT).show()
         }
     }
 }

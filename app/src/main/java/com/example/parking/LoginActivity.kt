@@ -23,6 +23,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 // An activity responsible for handling login and registration
 @AndroidEntryPoint
+/**
+ * Activity for handling login functionality.
+ */
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
@@ -41,17 +44,20 @@ class LoginActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navViewLogin
         val navController = findNavController(R.id.nav_host_fragment_content_login)
+
         // Define the top-level destinations for the app bar configuration
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.login, R.id.register
             ), drawerLayout
         )
+
         // Setup the action bar with navigation controller and app bar configuration
         setupActionBarWithNavController(navController, appBarConfiguration)
         // Setup the navigation view with navigation controller
         navView.setupWithNavController(navController)
 
+        // Request necessary permissions
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                 this,
@@ -62,11 +68,17 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Check if all required permissions are granted.
+     *
+     * @return True if all permissions are granted, false otherwise.
+     */
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             this, it) == PackageManager.PERMISSION_GRANTED
     }
 
+    // Handle permission request result
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults:
         IntArray) {
@@ -74,7 +86,7 @@ class LoginActivity : AppCompatActivity() {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (!allPermissionsGranted()) {
                 Toast.makeText(this,
-                    "Permissions not granted by the user.",
+                    getString(R.string.permissions),
                     Toast.LENGTH_SHORT).show()
             }
         }
@@ -101,6 +113,7 @@ class LoginActivity : AppCompatActivity() {
                 Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO
             ).apply {
+                // Add WRITE_EXTERNAL_STORAGE permission for devices with SDK <= P
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }

@@ -1,4 +1,4 @@
-package com.example.parking.data.db.users
+/*package com.example.parking.data.db.users
 
 import androidx.annotation.WorkerThread
 import kotlinx.coroutines.flow.Flow
@@ -16,3 +16,4 @@ class UsersDBRepository @Inject constructor(private val usersDao: UsersDao) {
         usersDao.insert(listUsersEntity)
     }
 }
+*/

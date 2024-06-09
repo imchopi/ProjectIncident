@@ -1,4 +1,5 @@
 plugins {
+    id("org.jetbrains.dokka")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.kapt")
@@ -85,4 +86,16 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+}
+
+
+apply(plugin="org.jetbrains.dokka")
+
+tasks.dokkaHtml.configure {
+    dokkaSourceSets{
+        configureEach {
+            documentedVisibilities.set(listOf(org.jetbrains.dokka.DokkaConfiguration.Visibility.PRIVATE)
+                    + documentedVisibilities.get())
+        }
+    }
 }

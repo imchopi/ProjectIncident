@@ -13,9 +13,14 @@ import androidx.annotation.RequiresExtension
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.parking.MainActivity
+import com.example.parking.R
+import com.example.parking.data.db.users.User
 import com.example.parking.data.db.users.UserInfo
-import com.example.parking.data.db.users.UsersEntity
+/*import com.example.parking.data.db.users.UserInfo
+import com.example.parking.data.db.users.UsersEntity*/
 import com.example.parking.databinding.FragmentRegisterBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -23,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 // Fragment for user registration
 @AndroidEntryPoint
@@ -37,7 +43,14 @@ class RegisterFragment : Fragment() {
     // Firebase Firestore instance
     private lateinit var firestore: FirebaseFirestore
 
-    // Called to create the fragment's view hierarchy
+    /**
+     * Called to create the fragment's view hierarchy.
+     *
+     * @param inflater The layout inflater object that can be used to inflate any views in the fragment.
+     * @param container This is the parent view that the fragment's UI should be attached to. The fragment should not add the view itself, but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState This fragment is being re-constructed from a previous saved state as given here.
+     * @return Returns the View for the fragment's UI, or null.
+     */
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,7 +61,12 @@ class RegisterFragment : Fragment() {
         return binding.root
     }
 
-    // Called after the fragment's view is created
+    /**
+     * Called after the fragment's view is created.
+     *
+     * @param view The fragment's root view.
+     * @param savedInstanceState If the fragment is being re-created from a previous saved state, this is the state.
+     */
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -72,14 +90,21 @@ class RegisterFragment : Fragment() {
 
             // Check if all fields are filled
             if (username.isEmpty() || name.isEmpty() || surname.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(requireContext(), "Please fill in all fields.", Toast.LENGTH_SHORT).show()
+                Snackbar.make(requireView(), getString(R.string.error_fill_fields), Snackbar.LENGTH_SHORT).show()
             } else if (password != confirmPassword) {
-                Toast.makeText(requireContext(), "Use the same password", Toast.LENGTH_SHORT).show()
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(getString(R.string.dialog_error_title))
+                    .setMessage(getString(R.string.error_password_mismatch))
+                    .setPositiveButton(getString(R.string.dialog_error_positive_button)) { dialog, which ->
+                        // Respond to positive button press
+                        dialog.dismiss()
+                    }
+                    .show()
             } else {
                 // Create a new user data object
-                val uuid = "2" // Sample UUID
-                val picture = "algo" // Sample picture
-                val userData = UsersEntity(id, uuid, username, name, picture, surname, email, password, "user")
+                val uuid = UUID.randomUUID().toString()
+                val picture = "" // You can set the picture here if required
+                val userData = User(uuid, username, name, picture, surname, email, password, "user")
 
                 // Register the user
                 registerUser(userData)
@@ -87,9 +112,13 @@ class RegisterFragment : Fragment() {
         }
     }
 
-    // Function to register a new user
+    /**
+     * Attempt to register a new user with the provided user data.
+     *
+     * @param userData The user data object containing the username, name, surname, email, password, etc.
+     */
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    private fun registerUser(userData: UsersEntity) {
+    private fun registerUser(userData: User) {
         lifecycleScope.launch {
             // Initialize Firebase Authentication
             auth = Firebase.auth
@@ -98,7 +127,7 @@ class RegisterFragment : Fragment() {
                 .addOnCompleteListener(requireActivity()) { task ->
                     if (task.isSuccessful) {
                         // Registration successful
-                        Log.d(TAG, "createUserWithEmail:success")
+                        Log.d(TAG,getString(R.string.createUser) )
                         // Get the Firebase Auth UID
                         val uid = auth.currentUser?.uid
                         if (uid != null) {
@@ -122,10 +151,9 @@ class RegisterFragment : Fragment() {
                         requireActivity().finish()
                     } else {
                         // Registration failed
-                        Log.w(TAG, "createUserWithEmail:failure", task.exception)
                         Toast.makeText(
                             requireContext(),
-                            "Authentication failed.",
+                            getString(R.string.authentication),
                             Toast.LENGTH_SHORT,
                         ).show()
                     }
@@ -133,10 +161,14 @@ class RegisterFragment : Fragment() {
         }
     }
 
-    // Function to write user data to Firestore
-    fun writeNewUser(userData: UserInfo) {
+    /**
+     * Write the user data to Firestore after successful user registration.
+     *
+     * @param userData The user data object containing the username, name, surname, email, password, etc.
+     */
+    private fun writeNewUser(userData: UserInfo) {
         // Initialize Firebase Firestore
-        val firestore = Firebase.firestore
+        firestore = Firebase.firestore
 
         // Use the Firebase Auth UID as the document ID
         val documentReference = firestore.collection("userInfo").document(userData.uuid)
@@ -144,10 +176,15 @@ class RegisterFragment : Fragment() {
         // Set the document data
         documentReference.set(userData)
             .addOnSuccessListener {
-                Log.d(TAG, "DocumentSnapshot successfully written!")
+
+                Log.d(TAG, getString(R.string.snapshot))
             }
             .addOnFailureListener { e ->
-                Log.w(TAG, "Error writing document", e)
+                Log.w(TAG, getString(R.string.errorDocument), e)
             }
+    }
+
+    companion object {
+        private const val TAG = "RegisterFragment"
     }
 }

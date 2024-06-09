@@ -29,6 +29,9 @@ import com.google.firebase.firestore.firestore
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
+/**
+ * Main activity that serves as the entry point of the application after login.
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -37,21 +40,29 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Inflate the layout using view binding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.appBarMain.toolbar)
 
+        // Initialize navigation components
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navViewMain
         val navController = findNavController(R.id.nav_host_fragment_content_main)
+
+        // Define the top-level destinations for the app bar configuration
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.home, R.id.addIncidentFragment
             ), drawerLayout
         )
+
+        // Setup the action bar with navigation controller and app bar configuration
         setupActionBarWithNavController(navController, appBarConfiguration)
+        // Setup the navigation view with navigation controller
         navView.setupWithNavController(navController)
 
+        // Handle navigation item clicks in the navigation view
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.logout -> {
@@ -72,9 +83,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Update navigation header with user information
         updateNavHeader()
     }
 
+    /**
+     * Update the navigation drawer header with user information.
+     */
     private fun updateNavHeader() {
         auth = Firebase.auth
         val navView: NavigationView = binding.navViewMain
@@ -111,7 +126,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     } else {
                         // Handle the case where document does not exist
-                        Log.d("Firestore", "No such document")
+                        Log.d("Firestore", getString(R.string.noSuchDocument))
                         Glide.with(this)
                             .load(R.drawable.ic_launcher_foreground) // optional placeholder
                             .into(imageView)
@@ -119,7 +134,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 .addOnFailureListener { exception ->
                     // Handle the error
-                    Log.w("Firestore", "Error getting document", exception)
+                    Log.w("Firestore", getString(R.string.gettingDocument), exception)
                     Glide.with(this)
                         .load(R.drawable.ic_launcher_foreground) // optional placeholder
                         .into(imageView)
@@ -127,6 +142,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Logout the current user and navigate to the login screen.
+     */
     private fun logout() {
         FirebaseAuth.getInstance().signOut()
         val intent = Intent(this, LoginActivity::class.java)
@@ -135,15 +153,16 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
+    // Initialize the contents of the Activity's standard options menu
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
 
+    // Handle up navigation in the app bar
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
-
 
 }

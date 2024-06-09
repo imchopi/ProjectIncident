@@ -17,5 +17,5 @@ class AddIncidentViewModel @Inject constructor() : ViewModel() {
     // Exposed immutable state flow of the URI of the selected photo
     val photoUri: StateFlow<Uri?>
         get() = _photoUri
-
 }
+
