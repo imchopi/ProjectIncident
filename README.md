@@ -1,9 +1,13 @@
 ### Video de la APP - CHATO
 [Video de la APP](https://www.youtube.com/watch?v=yJ3HbtzjHZA)
 
-### Diseño inicial (hubo alteraciones desde el diseño al video final)
+### Diseño inicial
 
 [Enlace a Figma](https://www.figma.com/file/RbhNW7L3FnECijbmcXBhSU/Untitled?type=design&node-id=0-1&mode=design&t=hFcrKQQai9hJStWj-0)
+
+### Diseño final
+
+[Enlace a Figma](https://www.figma.com/design/6G0rxVAfIxGvPJf4z0VU48/Untitled?node-id=0-1&t=7WG5uxCH2etG3Zoa-0)
 
 ### Tareas realizadas y cambios
 
