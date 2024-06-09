@@ -29,6 +29,12 @@ Previamente reciclé parte de un proyecto que hice de un Parking, con lo cual al
 - Modo offline con Room
 - Comprobación de inputs en el registro
 
+### Tareas realizadas de las pendientes
+- Mostrar detalles del usuario en el menú (30 de Mayo)
+- Modo offline con Room (25 de Mayo)
+- Comprobación de inputs en el registro (4 de Junio)
+- Traducción (9 de Junio)
+
 ### Bibliografía usada
 - [Documentación de Firebase](https://firebase.google.com/docs?hl=es-419)
 - [Guía de desarrollo de Android](https://developer.android.com/guide?hl=es-419)
