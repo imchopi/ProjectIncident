@@ -10,6 +10,11 @@
 ### Diseño final
 [Enlace a Figma](https://www.figma.com/design/6G0rxVAfIxGvPJf4z0VU48/Untitled?node-id=0-1&t=7WG5uxCH2etG3Zoa-0)
 
+### Documentación
+
+Podrás ver la documentación accediendo al fichero index en este orden:
+build > dokka > html > index
+
 ### Tareas realizadas y cambios
 - Página de bienvenida (18 de Abril)
 Desarrollé la página de bienvenida para la aplicación, asegurándome de que los usuarios tengan una experiencia amigable desde el primer contacto. Implementé un diseño limpio y atractivo que muestra el nombre y logo de la app, además de incluir animaciones sencillas para una mejor interacción.
