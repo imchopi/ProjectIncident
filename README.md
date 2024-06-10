@@ -11,8 +11,8 @@
 [Enlace a Figma](https://www.figma.com/design/6G0rxVAfIxGvPJf4z0VU48/Untitled?node-id=0-1&t=7WG5uxCH2etG3Zoa-0)
 
 ### Documentación
--[Enlace a la carpeta de la documentación](https://drive.google.com/drive/folders/1Fzp2s_X74ABFqGfbodv3KKBi_5UUi7eg?usp=sharing)
--Podrás ver la documentación accediendo al fichero index en este orden:
+- [Enlace a la carpeta de la documentación](https://drive.google.com/drive/folders/1Fzp2s_X74ABFqGfbodv3KKBi_5UUi7eg?usp=sharing)
+- Podrás ver la documentación accediendo al fichero index en este orden:
 ```build > dokka > html > index```
 
 ### Tareas realizadas y cambios
