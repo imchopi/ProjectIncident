@@ -2,7 +2,7 @@
 [Video de la APP](https://www.youtube.com/watch?v=yJ3HbtzjHZA)
 
 ### Video de la APP (14 de Junio)
-[Video de la APP](https://www.youtube.com/watch?v=yJ3HbtzjHZA)
+[Video de la APP](https://www.youtube.com/watch?v=Y-DlB9NU05A&t=1s)
 
 ### Diseño inicial
 [Enlace a Figma](https://www.figma.com/file/RbhNW7L3FnECijbmcXBhSU/Untitled?type=design&node-id=0-1&mode=design&t=hFcrKQQai9hJStWj-0)
