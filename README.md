@@ -13,7 +13,7 @@
 ### Documentación
 
 Podrás ver la documentación accediendo al fichero index en este orden:
-build > dokka > html > index
+```build > dokka > html > index```
 
 ### Tareas realizadas y cambios
 - Página de bienvenida (18 de Abril)
